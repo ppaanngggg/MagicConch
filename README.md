@@ -1,4 +1,6 @@
-# README
+# pipbot
+
+Personal Information Processor Bot
 
 ## About
 
