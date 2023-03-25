@@ -12,6 +12,11 @@ import { useEffect, useState } from "react";
 import { Chat } from "../wailsjs/go/main/App";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github.css";
+import "./styles/markdown.css";
 
 interface Message {
   role: string;
@@ -34,7 +39,12 @@ function Message(props: MessageProps) {
       }}
     >
       <Typography sx={{ paddingX: "12%", paddingY: "3%" }}>
-        <ReactMarkdown children={props.message.content} />
+        <ReactMarkdown
+          className={"markdown-body"}
+          children={props.message.content}
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw, rehypeHighlight]}
+        />
       </Typography>
     </ListItem>
   );

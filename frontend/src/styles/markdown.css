@@ -1,0 +1,5 @@
+@import "github-markdown-css/github-markdown.css";
+
+.markdown-body {
+    background-color: transparent;
+}

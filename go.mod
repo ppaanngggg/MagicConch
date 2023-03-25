@@ -6,7 +6,7 @@ require (
 	entgo.io/ent v0.11.9
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/sashabaranov/go-openai v1.5.0
-	github.com/wailsapp/wails/v2 v2.4.0
+	github.com/wailsapp/wails/v2 v2.4.1
 	github.com/yuin/goldmark v1.4.15
 	github.com/yuin/goldmark-emoji v1.0.1
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20220924101305-151362477c87
