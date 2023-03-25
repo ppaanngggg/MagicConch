@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"myproject/ent/settings"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ppaanngggg/PipBot/ent/settings"
 )
 
 // SettingsCreate is the builder for creating a Settings entity.

@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"myproject/ent/predicate"
-	"myproject/ent/settings"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ppaanngggg/PipBot/ent/predicate"
+	"github.com/ppaanngggg/PipBot/ent/settings"
 )
 
 // SettingsDelete is the builder for deleting a Settings entity.

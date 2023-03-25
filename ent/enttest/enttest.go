@@ -4,13 +4,13 @@ package enttest
 
 import (
 	"context"
-	"myproject/ent"
-	// required by schema hooks.
-	_ "myproject/ent/runtime"
 
-	"myproject/ent/migrate"
+	"github.com/ppaanngggg/PipBot/ent"
+	// required by schema hooks.
+	_ "github.com/ppaanngggg/PipBot/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
+	"github.com/ppaanngggg/PipBot/ent/migrate"
 )
 
 type (

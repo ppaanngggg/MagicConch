@@ -1,19 +1,15 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/ppaanngggg/PipBot/ent"
 	"github.com/sashabaranov/go-openai"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
-	"github.com/yuin/goldmark"
-	emoji "github.com/yuin/goldmark-emoji"
-	highlighting "github.com/yuin/goldmark-highlighting/v2"
-	"github.com/yuin/goldmark/extension"
-	"github.com/yuin/goldmark/renderer/html"
-	"myproject/ent"
 	"net/http"
 	"net/url"
+
+	"github.com/kirsle/configdir"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -22,11 +18,18 @@ type App struct {
 	ctx  context.Context
 	data *ent.Client
 	ai   *openai.Client
-	md   goldmark.Markdown
 }
 
 func NewApp() *App {
-	client, err := ent.Open("sqlite3", "file:myproject.db?mode=rwc&cache=shared&_fk=1")
+	userConfigDir := configdir.LocalConfig("PipBoy")
+	if err := configdir.MakePath(userConfigDir); err != nil {
+		panic(err)
+	}
+
+	client, err := ent.Open(
+		"sqlite3",
+		"file:"+userConfigDir+"sqlite3.db?mode=rwc&cache=shared&_fk=1",
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -42,20 +45,6 @@ func NewApp() *App {
 		panic(err)
 	}
 	app.setAI(settings)
-
-	app.md = goldmark.New(
-		goldmark.WithExtensions(
-			extension.GFM,
-			emoji.Emoji,
-			highlighting.NewHighlighting(
-				highlighting.WithStyle("monokai"),
-			),
-		),
-		goldmark.WithParserOptions(),
-		goldmark.WithRendererOptions(
-			html.WithHardWraps(),
-		),
-	)
 
 	return app
 }
@@ -161,21 +150,4 @@ func (a *App) Chat(conversation *Conversation) (*Conversation, error) {
 		conversation.Messages = append(conversation.Messages, message)
 	}
 	return conversation, nil
-}
-
-func (a *App) Render(source string) string {
-	{
-		runtime.LogDebug(a.ctx, "render req: %s"+source)
-	}
-	var buf bytes.Buffer
-	if err := a.md.Convert([]byte(source), &buf); err != nil {
-		runtime.LogWarningf(a.ctx, "render err: %v+", err)
-		return source
-	} else {
-		ret := buf.String()
-		{
-			runtime.LogDebug(a.ctx, "render resp:\n"+ret)
-		}
-		return ret
-	}
 }

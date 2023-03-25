@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"myproject/ent/predicate"
-	"myproject/ent/settings"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/ppaanngggg/PipBot/ent/predicate"
+	"github.com/ppaanngggg/PipBot/ent/settings"
 )
 
 // SettingsUpdate is the builder for updating Settings entities.

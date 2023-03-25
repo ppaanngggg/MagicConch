@@ -10,10 +10,6 @@ export function GetSettings() {
   return window['go']['main']['App']['GetSettings']();
 }
 
-export function Render(arg1) {
-  return window['go']['main']['App']['Render'](arg1);
-}
-
 export function SaveSettings(arg1) {
   return window['go']['main']['App']['SaveSettings'](arg1);
 }

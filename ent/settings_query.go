@@ -6,12 +6,12 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"myproject/ent/predicate"
-	"myproject/ent/settings"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ppaanngggg/PipBot/ent/predicate"
+	"github.com/ppaanngggg/PipBot/ent/settings"
 )
 
 // SettingsQuery is the builder for querying Settings entities.

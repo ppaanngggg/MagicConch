@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"myproject/ent/settings"
 	"reflect"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/ppaanngggg/PipBot/ent/settings"
 )
 
 // ent aliases to avoid import conflicts in user's code.

@@ -5,7 +5,8 @@ package hook
 import (
 	"context"
 	"fmt"
-	"myproject/ent"
+
+	"github.com/ppaanngggg/PipBot/ent"
 )
 
 // The SettingsFunc type is an adapter to allow the use of ordinary

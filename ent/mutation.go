@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"myproject/ent/predicate"
-	"myproject/ent/settings"
 	"sync"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/ppaanngggg/PipBot/ent/predicate"
+	"github.com/ppaanngggg/PipBot/ent/settings"
 )
 
 const (

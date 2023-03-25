@@ -5,6 +5,4 @@ export function Chat(arg1:any):Promise<any>;
 
 export function GetSettings():Promise<any>;
 
-export function Render(arg1:string):Promise<string>;
-
 export function SaveSettings(arg1:any):Promise<void>;

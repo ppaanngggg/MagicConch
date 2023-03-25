@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in myproject/ent/runtime.go
+// The schema-stitching logic is generated in github.com/ppaanngggg/PipBot/ent/runtime.go
 
 const (
 	Version = "v0.11.9"                                         // Version of ent codegen.

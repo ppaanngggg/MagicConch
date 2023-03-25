@@ -5,10 +5,10 @@ package ent
 import (
 	"encoding/json"
 	"fmt"
-	"myproject/ent/settings"
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/ppaanngggg/PipBot/ent/settings"
 )
 
 // Settings is the model entity for the Settings schema.
