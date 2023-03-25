@@ -124,6 +124,7 @@ function Conversation(props: ConversationProps) {
         multiline
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        maxRows={12}
         sx={{
           position: "fixed",
           margin: 1,
