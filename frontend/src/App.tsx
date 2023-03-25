@@ -7,6 +7,8 @@ import SideBar from "./SideBar";
 import SettingsDialog from "./SettingsDialog";
 import Conversation from "./Conversation";
 
+import "./styles/scrollbar.css";
+
 function App() {
   const sideBarWidth = "20%";
 
@@ -20,7 +22,7 @@ function App() {
         openSettings={() => setShowSettings(true)}
       />
       {showSettings && <SettingsDialog close={() => setShowSettings(false)} />}
-      <Conversation sideBarWidth={sideBarWidth} />
+      <Conversation />
     </Box>
   );
 }

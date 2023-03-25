@@ -1,16 +1,18 @@
 import {
   Box,
-  Button,
+  Divider,
   IconButton,
   LinearProgress,
   List,
   ListItem,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Chat } from "../wailsjs/go/main/App";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SendIcon from "@mui/icons-material/Send";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -55,11 +57,7 @@ interface Conversation {
   messages: Message[];
 }
 
-type ConversationProps = {
-  sideBarWidth: string;
-};
-
-function Conversation(props: ConversationProps) {
+function Conversation() {
   const [conversation, setConversation] = useState<Conversation>({
     id: 0,
     messages: [],
@@ -89,54 +87,69 @@ function Conversation(props: ConversationProps) {
   return (
     <Box
       sx={{
-        backgroundColor: (theme) => theme.palette.grey[100],
         width: "100vw",
-        height: "100vh",
+        backgroundColor: (theme) => theme.palette.grey[100],
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Delete") {
+          setConversation({ id: 0, messages: [] });
+        }
       }}
     >
-      <List disablePadding>
-        {conversation.messages.map((m) => (
-          <Message message={m} />
-        ))}
-        {chat && <LinearProgress />}
-        {/* avoid hidden by input TextField */}
-        <ListItem
-          disablePadding
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            height: 85,
+      <Stack sx={{ height: "100vh" }}>
+        <List disablePadding sx={{ flexGrow: 1, overflow: "auto" }}>
+          {conversation.messages.map((m) => (
+            <Message message={m} />
+          ))}
+          {chat && <LinearProgress />}
+        </List>
+
+        <Divider />
+
+        <TextField
+          variant="standard"
+          multiline
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          maxRows={12}
+          InputProps={{
+            sx: {
+              padding: "1rem",
+              paddingRight: "0rem",
+              "& .MuiInput-input": {
+                paddingRight: "3rem",
+              },
+            },
+          }}
+          onKeyDown={(e) => {
+            if (e.ctrlKey && e.key === "Enter") {
+              handleSend();
+            }
           }}
         />
-      </List>
+      </Stack>
+
+      <IconButton
+        onClick={handleSend}
+        sx={{
+          position: "absolute",
+          right: "0.5rem",
+          bottom: "0.5rem",
+        }}
+      >
+        <SendIcon />
+      </IconButton>
 
       {conversation.messages.length > 0 && (
         <IconButton
           onClick={() => {
             setConversation({ id: 0, messages: [] });
           }}
-          sx={{ position: "fixed", top: 5, right: 5 }}
+          sx={{ position: "fixed", top: "0.5rem", right: "0.5rem" }}
         >
           <DeleteIcon />
         </IconButton>
       )}
-
-      <TextField
-        multiline
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        maxRows={12}
-        sx={{
-          position: "fixed",
-          margin: 1,
-          bottom: 0,
-          left: props.sideBarWidth,
-          right: 0,
-          backgroundColor: (theme) => theme.palette.grey[300],
-        }}
-        InputProps={{
-          endAdornment: <Button onClick={handleSend}>Send</Button>,
-        }}
-      />
     </Box>
   );
 }
