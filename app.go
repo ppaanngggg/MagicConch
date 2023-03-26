@@ -21,14 +21,14 @@ type App struct {
 }
 
 func NewApp() *App {
-	userConfigDir := configdir.LocalConfig("PipBoy")
+	userConfigDir := configdir.LocalConfig("PipBot")
 	if err := configdir.MakePath(userConfigDir); err != nil {
 		panic(err)
 	}
 
 	client, err := ent.Open(
 		"sqlite3",
-		"file:"+userConfigDir+"sqlite3.db?mode=rwc&cache=shared&_fk=1",
+		"file:"+userConfigDir+"/db?mode=rwc&cache=shared&_fk=1",
 	)
 	if err != nil {
 		panic(err)
@@ -121,12 +121,7 @@ func (a *App) SaveSettings(settings *Settings) error {
 Conversation
 */
 
-type Conversation struct {
-	Id       int                            `json:"id"`
-	Messages []openai.ChatCompletionMessage `json:"messages"`
-}
-
-func (a *App) Chat(conversation *Conversation) (*Conversation, error) {
+func (a *App) Chat(conversation *ent.Conversation) (*ent.Conversation, error) {
 	{
 		tmp, err := json.MarshalIndent(conversation.Messages, "", "  ")
 		if err != nil {
@@ -157,4 +152,25 @@ func (a *App) Chat(conversation *Conversation) (*Conversation, error) {
 		conversation.Messages = append(conversation.Messages, message)
 	}
 	return conversation, nil
+}
+
+func (a *App) Save(conversation *ent.Conversation) error {
+	if conversation.ID > 0 {
+		return a.data.Conversation.UpdateOneID(conversation.ID).
+			SetMessages(conversation.Messages).
+			Exec(a.ctx)
+	} else {
+		return a.data.Conversation.Create().
+			SetTitle("").
+			SetMessages(conversation.Messages).
+			Exec(a.ctx)
+	}
+}
+
+func (a *App) One(id int) (*ent.Conversation, error) {
+	return a.data.Conversation.Get(a.ctx, id)
+}
+
+func (a *App) List() ([]*ent.Conversation, error) {
+	return a.data.Conversation.Query().Order(ent.Desc("update_time")).All(a.ctx)
 }

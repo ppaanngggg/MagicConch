@@ -6,5 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Conversation is the predicate function for conversation builders.
+type Conversation func(*sql.Selector)
+
 // Settings is the predicate function for settings builders.
 type Settings func(*sql.Selector)
