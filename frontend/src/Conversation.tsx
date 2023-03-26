@@ -22,7 +22,7 @@ interface Conversation {
   messages: Message[];
 }
 
-function Conversation() {
+export default function Conversation() {
   const [conversation, setConversation] = useState<Conversation>({
     id: 0,
     messages: [],
@@ -144,5 +144,3 @@ function Conversation() {
     </Box>
   );
 }
-
-export default Conversation;

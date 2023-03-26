@@ -6,6 +6,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Stack,
 } from "@mui/material";
 import * as React from "react";
 
@@ -14,7 +15,7 @@ type SideBarProps = {
   openSettings: () => void;
 };
 
-function SideBar(props: SideBarProps) {
+export default function SideBar(props: SideBarProps) {
   return (
     <Drawer
       sx={{
@@ -25,17 +26,18 @@ function SideBar(props: SideBarProps) {
       }}
       variant="permanent"
     >
-      <List disablePadding>
-        <ListItemButton onClick={props.openSettings}>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Setting" />
-        </ListItemButton>
+      <Stack sx={{ height: "100vh" }}>
+        <List disablePadding sx={{ flexGrow: 1, overflow: "auto" }}></List>
         <Divider />
-      </List>
+        <List>
+          <ListItemButton onClick={props.openSettings}>
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Setting" />
+          </ListItemButton>
+        </List>
+      </Stack>
     </Drawer>
   );
 }
-
-export default SideBar;

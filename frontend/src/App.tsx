@@ -9,7 +9,7 @@ import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function App() {
+export default function App() {
   const sideBarWidth = "20%";
 
   const [showSettings, setShowSettings] = useState(false);
@@ -27,5 +27,3 @@ function App() {
     </Box>
   );
 }
-
-export default App;
