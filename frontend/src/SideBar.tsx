@@ -1,4 +1,4 @@
-import * as React from "react";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Divider,
   Drawer,
@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
+import * as React from "react";
 
 type SideBarProps = {
   width: string;
@@ -25,7 +25,7 @@ function SideBar(props: SideBarProps) {
       }}
       variant="permanent"
     >
-      <List component="nav">
+      <List disablePadding>
         <ListItemButton onClick={props.openSettings}>
           <ListItemIcon>
             <SettingsIcon />

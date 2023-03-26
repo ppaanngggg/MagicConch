@@ -1,13 +1,13 @@
+import Conversation from "./Conversation";
+import SettingsDialog from "./SettingsDialog";
+import SideBar from "./SideBar";
+import "./styles/scrollbar.css";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
 import * as React from "react";
 import { useState } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-
-import SideBar from "./SideBar";
-import SettingsDialog from "./SettingsDialog";
-import Conversation from "./Conversation";
-
-import "./styles/scrollbar.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const sideBarWidth = "20%";
@@ -17,6 +17,7 @@ function App() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
+      <ToastContainer />
       <SideBar
         width={sideBarWidth}
         openSettings={() => setShowSettings(true)}

@@ -1,8 +1,9 @@
-export namespace main {
+export namespace ent {
 	
 	export class Conversation {
-	    id: number;
-	    messages: openai.ChatCompletionMessage[];
+	    id?: number;
+	    title?: string;
+	    messages?: openai.ChatCompletionMessage[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Conversation(source);
@@ -11,6 +12,7 @@ export namespace main {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.id = source["id"];
+	        this.title = source["title"];
 	        this.messages = this.convertValues(source["messages"], openai.ChatCompletionMessage);
 	    }
 	
@@ -32,6 +34,11 @@ export namespace main {
 		    return a;
 		}
 	}
+
+}
+
+export namespace main {
+	
 	export class Settings {
 	    apiKey: string;
 	    proxy: string;

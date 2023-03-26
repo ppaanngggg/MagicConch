@@ -1,3 +1,9 @@
+import { Chat } from "../wailsjs/go/main/App";
+import { Message, MessageBlock } from "./Message";
+import "./styles/markdown.css";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
+import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
   Divider,
@@ -7,14 +13,9 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import { Chat } from "../wailsjs/go/main/App";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SendIcon from "@mui/icons-material/Send";
-import SaveIcon from "@mui/icons-material/Save";
 import "highlight.js/styles/github.css";
-import "./styles/markdown.css";
-import { Message, MessageBlock } from "./Message";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 interface Conversation {
   id: number;
@@ -33,6 +34,7 @@ function Conversation() {
     if (chatting && conversation.messages.length > 0) {
       Chat(conversation)
         .then(setConversation)
+        .catch(toast.error)
         .finally(() => {
           setChatting(false);
         });

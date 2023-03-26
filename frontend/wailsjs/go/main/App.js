@@ -10,6 +10,18 @@ export function GetSettings() {
   return window['go']['main']['App']['GetSettings']();
 }
 
+export function List() {
+  return window['go']['main']['App']['List']();
+}
+
+export function One(arg1) {
+  return window['go']['main']['App']['One'](arg1);
+}
+
+export function Save(arg1) {
+  return window['go']['main']['App']['Save'](arg1);
+}
+
 export function SaveSettings(arg1) {
   return window['go']['main']['App']['SaveSettings'](arg1);
 }
