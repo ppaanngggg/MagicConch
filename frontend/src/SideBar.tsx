@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Divider,
   Drawer,
   List,
   ListItemButton,
@@ -31,9 +32,10 @@ function SideBar(props: SideBarProps) {
           </ListItemIcon>
           <ListItemText primary="Setting" />
         </ListItemButton>
+        <Divider />
       </List>
     </Drawer>
   );
 }
 
-export default SideBar
+export default SideBar;

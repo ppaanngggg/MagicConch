@@ -4,53 +4,17 @@ import {
   IconButton,
   LinearProgress,
   List,
-  ListItem,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Chat } from "../wailsjs/go/main/App";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import rehypeHighlight from "rehype-highlight";
+import SaveIcon from "@mui/icons-material/Save";
 import "highlight.js/styles/github.css";
 import "./styles/markdown.css";
-
-interface Message {
-  role: string;
-  content: string;
-}
-
-type MessageProps = {
-  message: Message;
-};
-
-function Message(props: MessageProps) {
-  return (
-    <ListItem
-      disablePadding
-      sx={{
-        backgroundColor: (theme) =>
-          props.message.role == "assistant"
-            ? theme.palette.grey[300]
-            : theme.palette.grey[100],
-      }}
-    >
-      <Typography sx={{ paddingX: "12%", paddingY: "3%" }}>
-        <ReactMarkdown
-          className={"markdown-body"}
-          children={props.message.content}
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw, rehypeHighlight]}
-        />
-      </Typography>
-    </ListItem>
-  );
-}
+import { Message, MessageBlock } from "./Message";
 
 interface Conversation {
   id: number;
@@ -63,26 +27,39 @@ function Conversation() {
     messages: [],
   });
   const [input, setInput] = useState("");
-  const [chat, setChat] = useState(false);
+  const [chatting, setChatting] = useState(false);
 
   useEffect(() => {
-    if (chat && conversation.messages.length > 0) {
+    if (chatting && conversation.messages.length > 0) {
       Chat(conversation)
         .then(setConversation)
         .finally(() => {
-          setChat(false);
+          setChatting(false);
         });
     }
-  }, [chat]);
+  }, [chatting]);
+
+  const listRef = useRef<HTMLUListElement | null>(null);
+  useEffect(() => {
+    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+  }, [conversation]);
 
   const handleSend = () => {
-    setConversation({
-      ...conversation,
-      messages: [...conversation.messages, { role: "user", content: input }],
-    });
-    setInput("");
-    setChat(true);
+    if (input.length > 0) {
+      setConversation({
+        ...conversation,
+        messages: [...conversation.messages, { role: "user", content: input }],
+      });
+      setInput("");
+      setChatting(true);
+    }
   };
+
+  const handleDelete = () => {
+    setConversation({ id: 0, messages: [] });
+  };
+
+  const handleSave = () => {};
 
   return (
     <Box
@@ -92,21 +69,29 @@ function Conversation() {
       }}
       onKeyDown={(e) => {
         if (e.key === "Delete") {
-          setConversation({ id: 0, messages: [] });
+          handleDelete();
+        } else if (e.ctrlKey && e.key === "Enter") {
+          handleSend();
         }
       }}
     >
       <Stack sx={{ height: "100vh" }}>
-        <List disablePadding sx={{ flexGrow: 1, overflow: "auto" }}>
+        <List
+          id="conversations"
+          ref={listRef}
+          disablePadding
+          sx={{ flexGrow: 1, overflow: "auto" }}
+        >
           {conversation.messages.map((m) => (
-            <Message message={m} />
+            <MessageBlock message={m} />
           ))}
-          {chat && <LinearProgress />}
         </List>
 
+        {chatting && <LinearProgress />}
         <Divider />
 
         <TextField
+          id="input-field"
           variant="standard"
           multiline
           value={input}
@@ -121,19 +106,15 @@ function Conversation() {
               },
             },
           }}
-          onKeyDown={(e) => {
-            if (e.ctrlKey && e.key === "Enter") {
-              handleSend();
-            }
-          }}
         />
       </Stack>
 
       <IconButton
+        id="send-button"
         onClick={handleSend}
         sx={{
           position: "absolute",
-          right: "0.5rem",
+          right: "0.6rem",
           bottom: "0.5rem",
         }}
       >
@@ -141,14 +122,22 @@ function Conversation() {
       </IconButton>
 
       {conversation.messages.length > 0 && (
-        <IconButton
-          onClick={() => {
-            setConversation({ id: 0, messages: [] });
-          }}
-          sx={{ position: "fixed", top: "0.5rem", right: "0.5rem" }}
-        >
-          <DeleteIcon />
-        </IconButton>
+        <div>
+          <IconButton
+            id="delete-button"
+            onClick={handleDelete}
+            sx={{ position: "absolute", top: "0.5rem", right: "0.6rem" }}
+          >
+            <DeleteIcon />
+          </IconButton>
+          <IconButton
+            id="delete-button"
+            onClick={handleSave}
+            sx={{ position: "absolute", top: "3rem", right: "0.6rem" }}
+          >
+            <SaveIcon />
+          </IconButton>
+        </div>
       )}
     </Box>
   );

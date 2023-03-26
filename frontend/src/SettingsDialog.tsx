@@ -60,4 +60,4 @@ function SettingsDialog(props: SettingsDialogProps) {
   );
 }
 
-export default SettingsDialog
+export default SettingsDialog;

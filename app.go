@@ -128,7 +128,10 @@ type Conversation struct {
 
 func (a *App) Chat(conversation *Conversation) (*Conversation, error) {
 	{
-		tmp, _ := json.MarshalIndent(conversation.Messages, "", "  ")
+		tmp, err := json.MarshalIndent(conversation.Messages, "", "  ")
+		if err != nil {
+			runtime.LogWarningf(a.ctx, "chat req marshal err: %v+", err)
+		}
 		runtime.LogDebug(a.ctx, "chat req:\n"+string(tmp))
 	}
 	resp, err := a.ai.CreateChatCompletion(
@@ -139,12 +142,16 @@ func (a *App) Chat(conversation *Conversation) (*Conversation, error) {
 		},
 	)
 	if err != nil {
+		runtime.LogWarningf(a.ctx, "chat request err: %v+", err)
 		return nil, err
 	}
 	if len(resp.Choices) > 0 {
 		message := resp.Choices[0].Message
 		{
-			tmp, _ := json.MarshalIndent(message, "", "  ")
+			tmp, err := json.MarshalIndent(message, "", "  ")
+			if err != nil {
+				runtime.LogWarningf(a.ctx, "chat resp marshal err: %v+", err)
+			}
 			runtime.LogDebug(a.ctx, "chat resp:\n"+string(tmp))
 		}
 		conversation.Messages = append(conversation.Messages, message)
