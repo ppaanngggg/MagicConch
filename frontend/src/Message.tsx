@@ -24,13 +24,24 @@ export function MessageBlock(props: MessageProps) {
             : theme.palette.grey[100],
       }}
     >
-      <Typography sx={{ paddingX: "12%", paddingY: "3%" }}>
-        <ReactMarkdown
-          className={"markdown-body"}
-          children={props.message.content}
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw, rehypeHighlight]}
-        />
+      <Typography
+        sx={{
+          width: "100%",
+          maxWidth: "100%",
+          paddingX: "12%",
+          paddingY: "3%",
+        }}
+      >
+        {props.message.role == "assistant" ? (
+          <ReactMarkdown
+            className={"markdown-body"}
+            children={props.message.content}
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw, rehypeHighlight]}
+          />
+        ) : (
+          <div>{props.message.content}</div>
+        )}
       </Typography>
     </ListItem>
   );
