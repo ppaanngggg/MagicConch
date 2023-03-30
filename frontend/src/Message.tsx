@@ -1,8 +1,14 @@
+import "./styles/markdown.css";
 import { ListItem, Typography } from "@mui/material";
+import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+
+const roleSystem = "system";
+const roleUser = "user";
+const roleAssistant = "assistant";
 
 export interface Message {
   role: string;
@@ -19,7 +25,7 @@ export function MessageBlock(props: MessageProps) {
       disablePadding
       sx={{
         backgroundColor: (theme) =>
-          props.message.role == "assistant"
+          props.message.role == roleAssistant
             ? theme.palette.grey[300]
             : theme.palette.grey[100],
       }}
@@ -32,7 +38,7 @@ export function MessageBlock(props: MessageProps) {
           paddingY: "3%",
         }}
       >
-        {props.message.role == "assistant" ? (
+        {props.message.role == roleAssistant ? (
           <ReactMarkdown
             className={"markdown-body"}
             children={props.message.content}

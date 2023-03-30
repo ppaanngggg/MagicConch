@@ -1,6 +1,5 @@
 import { Chat } from "../wailsjs/go/main/App";
 import { Message, MessageBlock } from "./Message";
-import "./styles/markdown.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
@@ -12,8 +11,8 @@ import {
   List,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
-import "highlight.js/styles/github.css";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -78,20 +77,39 @@ export default function Conversation() {
       }}
     >
       <Stack sx={{ height: "100vh" }}>
-        <List
-          id="conversations"
-          ref={listRef}
-          disablePadding
-          sx={{ flexGrow: 1, overflow: "auto" }}
-        >
-          {conversation.messages.map((m) => (
-            <MessageBlock message={m} />
-          ))}
-        </List>
+        {conversation.messages.length > 0 ? (
+          <List
+            id="conversations"
+            ref={listRef}
+            disablePadding
+            sx={{ flexGrow: 1, overflow: "auto" }}
+          >
+            {conversation.messages.map((m) => (
+              <MessageBlock message={m} />
+            ))}
+          </List>
+        ) : (
+          <Typography
+            sx={{
+              flexGrow: 1,
+              textAlign: "center",
+              paddingTop: "50%",
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <h3>🐚 Why not ask Magic Conch?</h3>
+            <p>
+              <b>Ctrl+Enter</b> to send
+            </p>
+            <p>
+              <b>Delete</b> to clear
+            </p>
+          </Typography>
+        )}
 
         {chatting && <LinearProgress />}
-        <Divider />
 
+        <Divider />
         <TextField
           id="input-field"
           variant="standard"
@@ -114,11 +132,7 @@ export default function Conversation() {
       <IconButton
         id="send-button"
         onClick={handleSend}
-        sx={{
-          position: "absolute",
-          right: "0.6rem",
-          bottom: "0.5rem",
-        }}
+        sx={{ position: "fixed", right: "0.6rem", bottom: "0.5rem" }}
       >
         <SendIcon />
       </IconButton>
@@ -128,14 +142,14 @@ export default function Conversation() {
           <IconButton
             id="delete-button"
             onClick={handleDelete}
-            sx={{ position: "absolute", top: "0.5rem", right: "0.6rem" }}
+            sx={{ position: "fixed", top: "0.5rem", right: "0.6rem" }}
           >
             <DeleteIcon />
           </IconButton>
           <IconButton
             id="delete-button"
             onClick={handleSave}
-            sx={{ position: "absolute", top: "3rem", right: "0.6rem" }}
+            sx={{ position: "fixed", top: "3rem", right: "0.6rem" }}
           >
             <SaveIcon />
           </IconButton>
