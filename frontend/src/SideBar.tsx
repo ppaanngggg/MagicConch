@@ -34,7 +34,7 @@ export default function SideBar(props: SideBarProps) {
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
-            <ListItemText primary="Setting" />
+            <ListItemText sx={{ overflow: "hidden" }} primary="Setting" />
           </ListItemButton>
         </List>
       </Stack>
