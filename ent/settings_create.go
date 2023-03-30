@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/ppaanngggg/PipBot/ent/settings"
+	"github.com/ppaanngggg/MagicConch/ent/settings"
 )
 
 // SettingsCreate is the builder for creating a Settings entity.

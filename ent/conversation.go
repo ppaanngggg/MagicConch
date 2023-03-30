@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/ppaanngggg/PipBot/ent/conversation"
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	openai "github.com/sashabaranov/go-openai"
 )
 

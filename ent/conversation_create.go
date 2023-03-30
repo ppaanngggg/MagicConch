@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/ppaanngggg/PipBot/ent/conversation"
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	openai "github.com/sashabaranov/go-openai"
 )
 

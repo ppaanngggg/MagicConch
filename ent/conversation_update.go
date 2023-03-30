@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
-	"github.com/ppaanngggg/PipBot/ent/conversation"
-	"github.com/ppaanngggg/PipBot/ent/predicate"
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
+	"github.com/ppaanngggg/MagicConch/ent/predicate"
 	openai "github.com/sashabaranov/go-openai"
 )
 

@@ -1,7 +1,3 @@
-# PipBot
+# Magic Conch
 
-Personal Information Processor Bot
-
-## About
-
-TODO
+🐚 Why not ask Magic Conch? 

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"github.com/ppaanngggg/PipBot/ent"
+	"github.com/ppaanngggg/MagicConch/ent"
 	"github.com/sashabaranov/go-openai"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"net/http"
@@ -21,7 +21,7 @@ type App struct {
 }
 
 func NewApp() *App {
-	userConfigDir := configdir.LocalConfig("PipBot")
+	userConfigDir := configdir.LocalConfig("MagicConch")
 	if err := configdir.MakePath(userConfigDir); err != nil {
 		panic(err)
 	}

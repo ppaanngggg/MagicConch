@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ppaanngggg/PipBot/ent"
+	"github.com/ppaanngggg/MagicConch/ent"
 )
 
 // The ConversationFunc type is an adapter to allow the use of ordinary

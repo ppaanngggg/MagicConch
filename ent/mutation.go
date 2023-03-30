@@ -10,9 +10,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/ppaanngggg/PipBot/ent/conversation"
-	"github.com/ppaanngggg/PipBot/ent/predicate"
-	"github.com/ppaanngggg/PipBot/ent/settings"
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
+	"github.com/ppaanngggg/MagicConch/ent/predicate"
+	"github.com/ppaanngggg/MagicConch/ent/settings"
 	openai "github.com/sashabaranov/go-openai"
 )
 

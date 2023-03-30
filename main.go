@@ -17,7 +17,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title: "PipBot",
+		Title: "MagicConch",
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/ppaanngggg/PipBot/ent/conversation"
-	"github.com/ppaanngggg/PipBot/ent/predicate"
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
+	"github.com/ppaanngggg/MagicConch/ent/predicate"
 )
 
 // ConversationQuery is the builder for querying Conversation entities.

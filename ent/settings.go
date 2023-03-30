@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/ppaanngggg/PipBot/ent/settings"
+	"github.com/ppaanngggg/MagicConch/ent/settings"
 )
 
 // Settings is the model entity for the Settings schema.

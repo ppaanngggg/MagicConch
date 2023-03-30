@@ -1,4 +1,4 @@
-module github.com/ppaanngggg/PipBot
+module github.com/ppaanngggg/MagicConch
 
 go 1.18
 

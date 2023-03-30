@@ -4,7 +4,7 @@ package settings
 
 import (
 	"entgo.io/ent/dialect/sql"
-	"github.com/ppaanngggg/PipBot/ent/predicate"
+	"github.com/ppaanngggg/MagicConch/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

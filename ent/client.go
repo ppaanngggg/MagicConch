@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ppaanngggg/PipBot/ent/migrate"
+	"github.com/ppaanngggg/MagicConch/ent/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"github.com/ppaanngggg/PipBot/ent/conversation"
-	"github.com/ppaanngggg/PipBot/ent/settings"
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
+	"github.com/ppaanngggg/MagicConch/ent/settings"
 )
 
 // Client is the client that holds all ent builders.
