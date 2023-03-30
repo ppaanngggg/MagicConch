@@ -1,3 +1,4 @@
+import SettingsDialog from "./SettingsDialog";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Divider,
@@ -9,13 +10,15 @@ import {
   Stack,
 } from "@mui/material";
 import * as React from "react";
+import { useState } from "react";
 
 type SideBarProps = {
   width: string;
-  openSettings: () => void;
 };
 
 export default function SideBar(props: SideBarProps) {
+  const [showSettings, setShowSettings] = useState(false);
+
   return (
     <Drawer
       sx={{
@@ -30,7 +33,11 @@ export default function SideBar(props: SideBarProps) {
         <List disablePadding sx={{ flexGrow: 1, overflow: "auto" }}></List>
         <Divider />
         <List>
-          <ListItemButton onClick={props.openSettings}>
+          <ListItemButton
+            onClick={() => {
+              setShowSettings(true);
+            }}
+          >
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
@@ -38,6 +45,8 @@ export default function SideBar(props: SideBarProps) {
           </ListItemButton>
         </List>
       </Stack>
+
+      {showSettings && <SettingsDialog close={() => setShowSettings(false)} />}
     </Drawer>
   );
 }
