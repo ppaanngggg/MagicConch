@@ -1,14 +1,14 @@
 import "./styles/markdown.css";
-import { ListItem, Typography } from "@mui/material";
+import { Divider, ListItem, Typography } from "@mui/material";
 import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
-const roleSystem = "system";
-const roleUser = "user";
-const roleAssistant = "assistant";
+export const roleSystem = "system";
+export const roleUser = "user";
+export const roleAssistant = "assistant";
 
 export interface Message {
   role: string;
@@ -24,10 +24,12 @@ export function MessageBlock(props: MessageProps) {
     <ListItem
       disablePadding
       sx={{
-        backgroundColor: (theme) =>
-          props.message.role == roleAssistant
-            ? theme.palette.grey[300]
-            : theme.palette.grey[100],
+        backgroundColor: (theme) => {
+          if (props.message.role == roleAssistant)
+            return theme.palette.grey[300];
+          if (props.message.role == roleSystem) return theme.palette.grey[200];
+          return theme.palette.grey[100];
+        },
       }}
     >
       <Typography
@@ -35,7 +37,7 @@ export function MessageBlock(props: MessageProps) {
           width: "100%",
           maxWidth: "100%",
           paddingX: "12%",
-          paddingY: "3%",
+          paddingY: "1.5rem",
         }}
       >
         {props.message.role == roleAssistant ? (
@@ -46,8 +48,13 @@ export function MessageBlock(props: MessageProps) {
             rehypePlugins={[rehypeRaw, rehypeHighlight]}
           />
         ) : (
-          <div>{props.message.content}</div>
+          <div>
+            {props.message.content.split("\n").map((i) => {
+              return <p>{i}</p>;
+            })}
+          </div>
         )}
+        {props.message.role == roleSystem && <Divider />}
       </Typography>
     </ListItem>
   );
