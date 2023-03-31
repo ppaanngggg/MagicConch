@@ -153,7 +153,7 @@ export default function Conversation() {
             sx={{
               flexGrow: 1,
               textAlign: "center",
-              paddingTop: "50%",
+              paddingTop: "calc(50vh - 5rem)",
               color: (theme) => theme.palette.grey[500],
             }}
           >
