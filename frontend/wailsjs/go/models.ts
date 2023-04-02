@@ -2,6 +2,10 @@ export namespace ent {
 	
 	export class Conversation {
 	    id?: number;
+	    // Go type: time
+	    create_time?: any;
+	    // Go type: time
+	    update_time?: any;
 	    title?: string;
 	    messages?: openai.ChatCompletionMessage[];
 	
@@ -12,6 +16,8 @@ export namespace ent {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.id = source["id"];
+	        this.create_time = this.convertValues(source["create_time"], null);
+	        this.update_time = this.convertValues(source["update_time"], null);
 	        this.title = source["title"];
 	        this.messages = this.convertValues(source["messages"], openai.ChatCompletionMessage);
 	    }

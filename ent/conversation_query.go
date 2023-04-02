@@ -261,12 +261,12 @@ func (cq *ConversationQuery) Clone() *ConversationQuery {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Conversation.Query().
-//		GroupBy(conversation.FieldTitle).
+//		GroupBy(conversation.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (cq *ConversationQuery) GroupBy(field string, fields ...string) *ConversationGroupBy {
@@ -284,11 +284,11 @@ func (cq *ConversationQuery) GroupBy(field string, fields ...string) *Conversati
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.Conversation.Query().
-//		Select(conversation.FieldTitle).
+//		Select(conversation.FieldCreateTime).
 //		Scan(ctx, &v)
 func (cq *ConversationQuery) Select(fields ...string) *ConversationSelect {
 	cq.ctx.Fields = append(cq.ctx.Fields, fields...)

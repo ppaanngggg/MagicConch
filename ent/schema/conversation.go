@@ -12,7 +12,7 @@ type Conversation struct {
 	ent.Schema
 }
 
-func (Conversation) Mixins() []ent.Mixin {
+func (Conversation) Mixin() []ent.Mixin {
 	return []ent.Mixin{mixin.Time{}}
 }
 

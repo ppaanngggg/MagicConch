@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -20,6 +21,34 @@ type ConversationCreate struct {
 	mutation *ConversationMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetCreateTime sets the "create_time" field.
+func (cc *ConversationCreate) SetCreateTime(t time.Time) *ConversationCreate {
+	cc.mutation.SetCreateTime(t)
+	return cc
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (cc *ConversationCreate) SetNillableCreateTime(t *time.Time) *ConversationCreate {
+	if t != nil {
+		cc.SetCreateTime(*t)
+	}
+	return cc
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (cc *ConversationCreate) SetUpdateTime(t time.Time) *ConversationCreate {
+	cc.mutation.SetUpdateTime(t)
+	return cc
+}
+
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (cc *ConversationCreate) SetNillableUpdateTime(t *time.Time) *ConversationCreate {
+	if t != nil {
+		cc.SetUpdateTime(*t)
+	}
+	return cc
 }
 
 // SetTitle sets the "title" field.
@@ -49,6 +78,7 @@ func (cc *ConversationCreate) Mutation() *ConversationMutation {
 
 // Save creates the Conversation in the database.
 func (cc *ConversationCreate) Save(ctx context.Context) (*Conversation, error) {
+	cc.defaults()
 	return withHooks[*Conversation, ConversationMutation](ctx, cc.sqlSave, cc.mutation, cc.hooks)
 }
 
@@ -74,8 +104,26 @@ func (cc *ConversationCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (cc *ConversationCreate) defaults() {
+	if _, ok := cc.mutation.CreateTime(); !ok {
+		v := conversation.DefaultCreateTime()
+		cc.mutation.SetCreateTime(v)
+	}
+	if _, ok := cc.mutation.UpdateTime(); !ok {
+		v := conversation.DefaultUpdateTime()
+		cc.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (cc *ConversationCreate) check() error {
+	if _, ok := cc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Conversation.create_time"`)}
+	}
+	if _, ok := cc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Conversation.update_time"`)}
+	}
 	if _, ok := cc.mutation.Messages(); !ok {
 		return &ValidationError{Name: "messages", err: errors.New(`ent: missing required field "Conversation.messages"`)}
 	}
@@ -106,6 +154,14 @@ func (cc *ConversationCreate) createSpec() (*Conversation, *sqlgraph.CreateSpec)
 		_spec = sqlgraph.NewCreateSpec(conversation.Table, sqlgraph.NewFieldSpec(conversation.FieldID, field.TypeInt))
 	)
 	_spec.OnConflict = cc.conflict
+	if value, ok := cc.mutation.CreateTime(); ok {
+		_spec.SetField(conversation.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := cc.mutation.UpdateTime(); ok {
+		_spec.SetField(conversation.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
+	}
 	if value, ok := cc.mutation.Title(); ok {
 		_spec.SetField(conversation.FieldTitle, field.TypeString, value)
 		_node.Title = value
@@ -121,7 +177,7 @@ func (cc *ConversationCreate) createSpec() (*Conversation, *sqlgraph.CreateSpec)
 // of the `INSERT` statement. For example:
 //
 //	client.Conversation.Create().
-//		SetTitle(v).
+//		SetCreateTime(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -130,7 +186,7 @@ func (cc *ConversationCreate) createSpec() (*Conversation, *sqlgraph.CreateSpec)
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ConversationUpsert) {
-//			SetTitle(v+v).
+//			SetCreateTime(v+v).
 //		}).
 //		Exec(ctx)
 func (cc *ConversationCreate) OnConflict(opts ...sql.ConflictOption) *ConversationUpsertOne {
@@ -165,6 +221,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetUpdateTime sets the "update_time" field.
+func (u *ConversationUpsert) SetUpdateTime(v time.Time) *ConversationUpsert {
+	u.Set(conversation.FieldUpdateTime, v)
+	return u
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *ConversationUpsert) UpdateUpdateTime() *ConversationUpsert {
+	u.SetExcluded(conversation.FieldUpdateTime)
+	return u
+}
 
 // SetTitle sets the "title" field.
 func (u *ConversationUpsert) SetTitle(v string) *ConversationUpsert {
@@ -206,6 +274,11 @@ func (u *ConversationUpsert) UpdateMessages() *ConversationUpsert {
 //		Exec(ctx)
 func (u *ConversationUpsertOne) UpdateNewValues() *ConversationUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.CreateTime(); exists {
+			s.SetIgnore(conversation.FieldCreateTime)
+		}
+	}))
 	return u
 }
 
@@ -234,6 +307,20 @@ func (u *ConversationUpsertOne) Update(set func(*ConversationUpsert)) *Conversat
 		set(&ConversationUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *ConversationUpsertOne) SetUpdateTime(v time.Time) *ConversationUpsertOne {
+	return u.Update(func(s *ConversationUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *ConversationUpsertOne) UpdateUpdateTime() *ConversationUpsertOne {
+	return u.Update(func(s *ConversationUpsert) {
+		s.UpdateUpdateTime()
+	})
 }
 
 // SetTitle sets the "title" field.
@@ -319,6 +406,7 @@ func (ccb *ConversationCreateBulk) Save(ctx context.Context) ([]*Conversation, e
 	for i := range ccb.builders {
 		func(i int, root context.Context) {
 			builder := ccb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ConversationMutation)
 				if !ok {
@@ -401,7 +489,7 @@ func (ccb *ConversationCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ConversationUpsert) {
-//			SetTitle(v+v).
+//			SetCreateTime(v+v).
 //		}).
 //		Exec(ctx)
 func (ccb *ConversationCreateBulk) OnConflict(opts ...sql.ConflictOption) *ConversationUpsertBulk {
@@ -440,6 +528,13 @@ type ConversationUpsertBulk struct {
 //		Exec(ctx)
 func (u *ConversationUpsertBulk) UpdateNewValues() *ConversationUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.CreateTime(); exists {
+				s.SetIgnore(conversation.FieldCreateTime)
+			}
+		}
+	}))
 	return u
 }
 
@@ -468,6 +563,20 @@ func (u *ConversationUpsertBulk) Update(set func(*ConversationUpsert)) *Conversa
 		set(&ConversationUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *ConversationUpsertBulk) SetUpdateTime(v time.Time) *ConversationUpsertBulk {
+	return u.Update(func(s *ConversationUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *ConversationUpsertBulk) UpdateUpdateTime() *ConversationUpsertBulk {
+	return u.Update(func(s *ConversationUpsert) {
+		s.UpdateUpdateTime()
+	})
 }
 
 // SetTitle sets the "title" field.

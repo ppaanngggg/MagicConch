@@ -9,6 +9,6 @@ export function List():Promise<Array<any>>;
 
 export function One(arg1:number):Promise<any>;
 
-export function Save(arg1:any):Promise<void>;
+export function Save(arg1:any):Promise<any>;
 
 export function SaveSettings(arg1:any):Promise<void>;

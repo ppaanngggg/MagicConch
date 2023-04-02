@@ -8,6 +8,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/kirsle/configdir"
 
@@ -154,16 +155,30 @@ func (a *App) Chat(conversation *ent.Conversation) (*ent.Conversation, error) {
 	return conversation, nil
 }
 
-func (a *App) Save(conversation *ent.Conversation) error {
+func (a *App) Save(conversation *ent.Conversation) (*ent.Conversation, error) {
+	{
+		tmp, err := json.MarshalIndent(conversation.Messages, "", "  ")
+		if err != nil {
+			runtime.LogWarningf(a.ctx, "save req marshal err: %v+", err)
+		}
+		runtime.LogDebug(a.ctx, "save req:\n"+string(tmp))
+	}
 	if conversation.ID > 0 {
 		return a.data.Conversation.UpdateOneID(conversation.ID).
 			SetMessages(conversation.Messages).
-			Exec(a.ctx)
+			Save(a.ctx)
 	} else {
+		title := ""
+		for _, c := range conversation.Messages {
+			if c.Role == openai.ChatMessageRoleUser {
+				title = strings.Split(c.Content, "\n")[0]
+				break
+			}
+		}
 		return a.data.Conversation.Create().
-			SetTitle("").
+			SetTitle(title).
 			SetMessages(conversation.Messages).
-			Exec(a.ctx)
+			Save(a.ctx)
 	}
 }
 

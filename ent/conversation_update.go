@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -26,6 +27,12 @@ type ConversationUpdate struct {
 // Where appends a list predicates to the ConversationUpdate builder.
 func (cu *ConversationUpdate) Where(ps ...predicate.Conversation) *ConversationUpdate {
 	cu.mutation.Where(ps...)
+	return cu
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (cu *ConversationUpdate) SetUpdateTime(t time.Time) *ConversationUpdate {
+	cu.mutation.SetUpdateTime(t)
 	return cu
 }
 
@@ -68,6 +75,7 @@ func (cu *ConversationUpdate) Mutation() *ConversationMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (cu *ConversationUpdate) Save(ctx context.Context) (int, error) {
+	cu.defaults()
 	return withHooks[int, ConversationMutation](ctx, cu.sqlSave, cu.mutation, cu.hooks)
 }
 
@@ -93,6 +101,14 @@ func (cu *ConversationUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (cu *ConversationUpdate) defaults() {
+	if _, ok := cu.mutation.UpdateTime(); !ok {
+		v := conversation.UpdateDefaultUpdateTime()
+		cu.mutation.SetUpdateTime(v)
+	}
+}
+
 func (cu *ConversationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(conversation.Table, conversation.Columns, sqlgraph.NewFieldSpec(conversation.FieldID, field.TypeInt))
 	if ps := cu.mutation.predicates; len(ps) > 0 {
@@ -101,6 +117,9 @@ func (cu *ConversationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := cu.mutation.UpdateTime(); ok {
+		_spec.SetField(conversation.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := cu.mutation.Title(); ok {
 		_spec.SetField(conversation.FieldTitle, field.TypeString, value)
@@ -134,6 +153,12 @@ type ConversationUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *ConversationMutation
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (cuo *ConversationUpdateOne) SetUpdateTime(t time.Time) *ConversationUpdateOne {
+	cuo.mutation.SetUpdateTime(t)
+	return cuo
 }
 
 // SetTitle sets the "title" field.
@@ -188,6 +213,7 @@ func (cuo *ConversationUpdateOne) Select(field string, fields ...string) *Conver
 
 // Save executes the query and returns the updated Conversation entity.
 func (cuo *ConversationUpdateOne) Save(ctx context.Context) (*Conversation, error) {
+	cuo.defaults()
 	return withHooks[*Conversation, ConversationMutation](ctx, cuo.sqlSave, cuo.mutation, cuo.hooks)
 }
 
@@ -210,6 +236,14 @@ func (cuo *ConversationUpdateOne) Exec(ctx context.Context) error {
 func (cuo *ConversationUpdateOne) ExecX(ctx context.Context) {
 	if err := cuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (cuo *ConversationUpdateOne) defaults() {
+	if _, ok := cuo.mutation.UpdateTime(); !ok {
+		v := conversation.UpdateDefaultUpdateTime()
+		cuo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -238,6 +272,9 @@ func (cuo *ConversationUpdateOne) sqlSave(ctx context.Context) (_node *Conversat
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := cuo.mutation.UpdateTime(); ok {
+		_spec.SetField(conversation.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := cuo.mutation.Title(); ok {
 		_spec.SetField(conversation.FieldTitle, field.TypeString, value)

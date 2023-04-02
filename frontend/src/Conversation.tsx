@@ -1,4 +1,4 @@
-import { Chat } from "../wailsjs/go/main/App";
+import { Chat, Save } from "../wailsjs/go/main/App";
 import { Message, MessageBlock, roleSystem, roleUser } from "./Message";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeIcon from "@mui/icons-material/Mode";
@@ -69,7 +69,9 @@ export default function Conversation() {
     setConversation({ id: 0, messages: [] });
   };
 
-  const handleSave = () => {};
+  const handleSave = () => {
+    Save(conversation).then(setConversation).catch(toast.error);
+  };
 
   function SystemDialog() {
     const [system, setSystem] = useState("");
@@ -207,7 +209,7 @@ export default function Conversation() {
             <DeleteIcon />
           </IconButton>
           <IconButton
-            id="delete-button"
+            id="save-button"
             onClick={handleSave}
             sx={{ position: "fixed", top: "3rem", right: "0.6rem" }}
           >

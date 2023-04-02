@@ -2,8 +2,30 @@
 
 package ent
 
+import (
+	"time"
+
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
+	"github.com/ppaanngggg/MagicConch/ent/schema"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	conversationMixin := schema.Conversation{}.Mixin()
+	conversationMixinFields0 := conversationMixin[0].Fields()
+	_ = conversationMixinFields0
+	conversationFields := schema.Conversation{}.Fields()
+	_ = conversationFields
+	// conversationDescCreateTime is the schema descriptor for create_time field.
+	conversationDescCreateTime := conversationMixinFields0[0].Descriptor()
+	// conversation.DefaultCreateTime holds the default value on creation for the create_time field.
+	conversation.DefaultCreateTime = conversationDescCreateTime.Default.(func() time.Time)
+	// conversationDescUpdateTime is the schema descriptor for update_time field.
+	conversationDescUpdateTime := conversationMixinFields0[1].Descriptor()
+	// conversation.DefaultUpdateTime holds the default value on creation for the update_time field.
+	conversation.DefaultUpdateTime = conversationDescUpdateTime.Default.(func() time.Time)
+	// conversation.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	conversation.UpdateDefaultUpdateTime = conversationDescUpdateTime.UpdateDefault.(func() time.Time)
 }
