@@ -1,16 +1,12 @@
 import { Chat, Save } from "../wailsjs/go/main/App";
 import { Message, MessageBlock, roleSystem, roleUser } from "./Message";
+import SystemDialog from "./SystemDialog";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeIcon from "@mui/icons-material/Mode";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   IconButton,
   LinearProgress,
@@ -34,6 +30,7 @@ export default function Conversation() {
   });
   const [input, setInput] = useState("");
   const [chatting, setChatting] = useState(false);
+  const [showSystem, setShowSystem] = useState(false);
 
   useEffect(() => {
     if (chatting && conversation.messages.length > 0) {
@@ -73,53 +70,6 @@ export default function Conversation() {
     Save(conversation).then(setConversation).catch(toast.error);
   };
 
-  function SystemDialog() {
-    const [system, setSystem] = useState("");
-
-    return (
-      <Dialog open={true} fullWidth={true}>
-        <DialogTitle>System</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            label="system"
-            fullWidth
-            variant="standard"
-            multiline
-            maxRows={4}
-            onChange={(event) => {
-              setSystem(event.target.value);
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setShowSystem(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              setConversation({
-                ...conversation,
-                messages: [
-                  ...conversation.messages,
-                  { role: roleSystem, content: system },
-                ],
-              });
-              setShowSystem(false);
-            }}
-          >
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-
-  const [showSystem, setShowSystem] = useState(false);
   const handleSystem = () => {
     setShowSystem(true);
   };
@@ -228,7 +178,19 @@ export default function Conversation() {
         </div>
       )}
 
-      {showSystem && <SystemDialog />}
+      {showSystem && (
+        <SystemDialog
+          close={() => {
+            setShowSystem(false);
+          }}
+          updateSystem={(system) => {
+            setConversation({
+              id: 0,
+              messages: [{ role: roleSystem, content: system }],
+            });
+          }}
+        />
+      )}
     </Box>
   );
 }
