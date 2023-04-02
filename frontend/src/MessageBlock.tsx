@@ -19,7 +19,7 @@ type MessageProps = {
   message: Message;
 };
 
-export function MessageBlock(props: MessageProps) {
+export default function MessageBlock(props: MessageProps) {
   return (
     <ListItem
       disablePadding

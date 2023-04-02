@@ -1,5 +1,5 @@
 import { Chat, Save } from "../wailsjs/go/main/App";
-import { Message, MessageBlock, roleSystem, roleUser } from "./Message";
+import MessageBlock, { Message, roleSystem, roleUser } from "./MessageBlock";
 import SystemDialog from "./SystemDialog";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeIcon from "@mui/icons-material/Mode";
@@ -18,14 +18,16 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-interface Conversation {
+export interface Conversation {
   id: number;
+  title: string;
   messages: Message[];
 }
 
-export default function Conversation() {
+export default function ConversationPlane() {
   const [conversation, setConversation] = useState<Conversation>({
     id: 0,
+    title: "",
     messages: [],
   });
   const [input, setInput] = useState("");
@@ -63,7 +65,7 @@ export default function Conversation() {
   };
 
   const handleDelete = () => {
-    setConversation({ id: 0, messages: [] });
+    setConversation({ id: 0, title: "", messages: [] });
   };
 
   const handleSave = () => {
@@ -186,6 +188,7 @@ export default function Conversation() {
           updateSystem={(system) => {
             setConversation({
               id: 0,
+              title: "",
               messages: [{ role: roleSystem, content: system }],
             });
           }}
