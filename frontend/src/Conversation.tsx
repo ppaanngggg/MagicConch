@@ -125,7 +125,7 @@ export default function Conversation() {
   return (
     <Box
       sx={{
-        width: "100vw",
+        width: "80vw",
         backgroundColor: (theme) => theme.palette.grey[100],
       }}
       onKeyDown={(e) => {

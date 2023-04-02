@@ -8,13 +8,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
-  const sideBarWidth = "20%";
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <ToastContainer />
-      <SideBar width={sideBarWidth} />
+      <SideBar />
       <Conversation />
     </Box>
   );

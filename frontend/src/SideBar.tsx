@@ -12,19 +12,19 @@ import {
 import * as React from "react";
 import { useState } from "react";
 
-type SideBarProps = {
-  width: string;
-};
+type SideBarProps = {};
 
 export default function SideBar(props: SideBarProps) {
+  const width = "20vw";
+
   const [showSettings, setShowSettings] = useState(false);
 
   return (
     <Drawer
       sx={{
-        width: props.width,
+        width: width,
         "& .MuiDrawer-paper": {
-          width: props.width,
+          width: width,
         },
       }}
       variant="permanent"
