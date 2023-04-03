@@ -186,6 +186,10 @@ func (a *App) One(id int) (*ent.Conversation, error) {
 	return a.data.Conversation.Get(a.ctx, id)
 }
 
+func (a *App) Delete(id int) error {
+	return a.data.Conversation.DeleteOneID(id).Exec(a.ctx)
+}
+
 func (a *App) List() ([]*ent.Conversation, error) {
 	return a.data.Conversation.Query().Order(ent.Desc("update_time")).All(a.ctx)
 }

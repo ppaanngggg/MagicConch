@@ -6,6 +6,10 @@ export function Chat(arg1) {
   return window['go']['main']['App']['Chat'](arg1);
 }
 
+export function Delete(arg1) {
+  return window['go']['main']['App']['Delete'](arg1);
+}
+
 export function GetSettings() {
   return window['go']['main']['App']['GetSettings']();
 }

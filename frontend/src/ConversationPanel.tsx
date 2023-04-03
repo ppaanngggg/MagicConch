@@ -1,4 +1,4 @@
-import { Chat, Save } from "../wailsjs/go/main/App";
+import { Chat, One, Save } from "../wailsjs/go/main/App";
 import MessageBlock, { Message, roleSystem, roleUser } from "./MessageBlock";
 import SystemDialog from "./SystemDialog";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -24,7 +24,13 @@ export interface Conversation {
   messages: Message[];
 }
 
-export default function ConversationPlane() {
+interface ConversationPanelProps {
+  id: number;
+  resetId: () => void;
+  refresh: () => void;
+}
+
+export default function ConversationPanel(props: ConversationPanelProps) {
   const [conversation, setConversation] = useState<Conversation>({
     id: 0,
     title: "",
@@ -34,7 +40,19 @@ export default function ConversationPlane() {
   const [chatting, setChatting] = useState(false);
   const [showSystem, setShowSystem] = useState(false);
 
+  const listRef = useRef<HTMLUListElement | null>(null);
+
   useEffect(() => {
+    if (props.id > 0) {
+      One(props.id).then(setConversation).catch(toast.error);
+    } else {
+      setConversation({ id: 0, title: "", messages: [] });
+    }
+  }, [props.id]);
+
+  useEffect(() => {
+    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+
     if (chatting && conversation.messages.length > 0) {
       Chat(conversation)
         .then(setConversation)
@@ -44,11 +62,6 @@ export default function ConversationPlane() {
         });
     }
   }, [chatting]);
-
-  const listRef = useRef<HTMLUListElement | null>(null);
-  useEffect(() => {
-    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-  }, [conversation]);
 
   const handleSend = () => {
     if (input.length > 0) {
@@ -65,11 +78,14 @@ export default function ConversationPlane() {
   };
 
   const handleDelete = () => {
-    setConversation({ id: 0, title: "", messages: [] });
+    props.resetId();
   };
 
   const handleSave = () => {
-    Save(conversation).then(setConversation).catch(toast.error);
+    Save(conversation)
+      .then(setConversation)
+      .then(props.refresh)
+      .catch(toast.error);
   };
 
   const handleSystem = () => {

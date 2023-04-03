@@ -1,11 +1,15 @@
-import { Conversation } from "./ConversationPlane";
+import { Delete } from "../wailsjs/go/main/App";
+import { Conversation } from "./ConversationPanel";
 import SettingsDialog from "./SettingsDialog";
+import DeleteIcon from "@mui/icons-material/Delete";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Card,
   Divider,
   Drawer,
+  IconButton,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -13,12 +17,16 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 type SideBarProps = {
   conversations: Conversation[];
+  setId: (id: number) => void;
+  refresh: () => void;
 };
 
 export default function SideBar(props: SideBarProps) {
+  const [hoveredId, setHoveredId] = useState<number>(0);
   const [showSettings, setShowSettings] = useState(false);
 
   return (
@@ -31,7 +39,12 @@ export default function SideBar(props: SideBarProps) {
       }}
       variant="permanent"
     >
-      <Stack sx={{ height: "100vh" }}>
+      <Stack
+        sx={{ height: "100vh" }}
+        onMouseLeave={() => {
+          setHoveredId(0);
+        }}
+      >
         <List>
           <ListItemButton
             onClick={() => {
@@ -55,12 +68,37 @@ export default function SideBar(props: SideBarProps) {
         >
           {props.conversations.map((conversation) => (
             <Card variant={"outlined"} sx={{ margin: "0.2rem" }}>
-              <ListItemButton>
-                <ListItemText
-                  primary={conversation.title}
-                  primaryTypographyProps={{ noWrap: true }}
-                />
-              </ListItemButton>
+              <ListItem
+                disablePadding
+                secondaryAction={
+                  conversation.id === hoveredId && (
+                    <IconButton
+                      edge="end"
+                      onClick={() => {
+                        Delete(conversation.id)
+                          .then(props.refresh)
+                          .catch(toast.error);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )
+                }
+              >
+                <ListItemButton
+                  onClick={() => {
+                    props.setId(conversation.id);
+                  }}
+                  onMouseOver={() => {
+                    setHoveredId(conversation.id);
+                  }}
+                >
+                  <ListItemText
+                    primary={conversation.title}
+                    primaryTypographyProps={{ noWrap: true }}
+                  />
+                </ListItemButton>
+              </ListItem>
             </Card>
           ))}
         </List>

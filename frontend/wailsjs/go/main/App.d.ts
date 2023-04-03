@@ -3,6 +3,8 @@
 
 export function Chat(arg1:any):Promise<any>;
 
+export function Delete(arg1:number):Promise<void>;
+
 export function GetSettings():Promise<any>;
 
 export function List():Promise<Array<any>>;

@@ -1,5 +1,5 @@
 import { List } from "../wailsjs/go/main/App";
-import ConversationPlane, { Conversation } from "./ConversationPlane";
+import ConversationPanel, { Conversation } from "./ConversationPanel";
 import SideBar from "./SideBar";
 import "./styles/scrollbar.css";
 import Box from "@mui/material/Box";
@@ -10,18 +10,41 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
+  const [id, setId] = React.useState(0);
   const [conversations, setConversations] = React.useState<Conversation[]>([]);
+  const [refresh, setRefresh] = React.useState(true);
 
   useEffect(() => {
-    List().then(setConversations).catch(toast.error);
-  }, []);
+    if (refresh) {
+      List()
+        .then(setConversations)
+        .catch(toast.error)
+        .finally(() => {
+          setRefresh(false);
+        });
+    }
+  }, [refresh]);
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <ToastContainer />
-      <SideBar conversations={conversations} />
-      <ConversationPlane />
+      <SideBar
+        conversations={conversations}
+        setId={setId}
+        refresh={() => {
+          setRefresh(true);
+        }}
+      />
+      <ConversationPanel
+        id={id}
+        resetId={() => {
+          setId(0);
+        }}
+        refresh={() => {
+          setRefresh(true);
+        }}
+      />
     </Box>
   );
 }
