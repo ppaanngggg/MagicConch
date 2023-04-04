@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"github.com/ppaanngggg/MagicConch/ent"
-	"github.com/sashabaranov/go-openai"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/ppaanngggg/MagicConch/ent"
+	"github.com/sashabaranov/go-openai"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/kirsle/configdir"
 
@@ -52,6 +53,13 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+func (a *App) shutdown(ctx context.Context) {
+	err := a.data.Close()
+	if err != nil {
+		runtime.LogWarningf(ctx, "db close err: %v+", err)
+	}
 }
 
 /*
