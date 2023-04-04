@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { toast } from "react-toastify";
 
 export interface Conversation {
@@ -93,20 +94,15 @@ export default function ConversationPanel(props: ConversationPanelProps) {
     setShowSystem(true);
   };
 
+  useHotkeys("ctrl+n", handleNew);
+  useHotkeys("ctrl+s", handleSave);
+  useHotkeys("ctrl+enter", handleSend);
+
   return (
     <Box
       sx={{
         width: "80vw",
         backgroundColor: (theme) => theme.palette.grey[100],
-      }}
-      onKeyDown={(e) => {
-        if (e.ctrlKey && e.key === "n") {
-          handleNew();
-        } else if (e.ctrlKey && e.key === "s") {
-          handleSave();
-        } else if (e.ctrlKey && e.key === "Enter") {
-          handleSend();
-        }
       }}
     >
       <Stack sx={{ height: "100vh" }}>
@@ -126,7 +122,7 @@ export default function ConversationPanel(props: ConversationPanelProps) {
             sx={{
               flexGrow: 1,
               textAlign: "center",
-              paddingTop: "calc(50vh - 5rem)",
+              paddingTop: "calc(50vh - 6rem)",
               color: (theme) => theme.palette.grey[500],
             }}
           >
