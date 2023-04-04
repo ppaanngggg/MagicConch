@@ -94,9 +94,9 @@ export default function ConversationPanel(props: ConversationPanelProps) {
     setShowSystem(true);
   };
 
-  useHotkeys("ctrl+n", handleNew);
-  useHotkeys("ctrl+s", handleSave);
-  useHotkeys("ctrl+enter", handleSend);
+  useHotkeys("ctrl+n", handleNew, { enableOnFormTags: true });
+  useHotkeys("ctrl+s", handleSave, { enableOnFormTags: true });
+  useHotkeys("ctrl+enter", handleSend, { enableOnFormTags: true });
 
   return (
     <Box
