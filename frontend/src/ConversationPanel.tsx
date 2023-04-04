@@ -1,7 +1,7 @@
 import { Chat, One, Save } from "../wailsjs/go/main/App";
 import MessageBlock, { Message, roleSystem, roleUser } from "./MessageBlock";
 import SystemDialog from "./SystemDialog";
-import DeleteIcon from "@mui/icons-material/Delete";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import ModeIcon from "@mui/icons-material/Mode";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
@@ -77,7 +77,8 @@ export default function ConversationPanel(props: ConversationPanelProps) {
     }
   };
 
-  const handleDelete = () => {
+  const handleNew = () => {
+    setConversation({ id: 0, title: "", messages: [] });
     props.resetId();
   };
 
@@ -99,8 +100,10 @@ export default function ConversationPanel(props: ConversationPanelProps) {
         backgroundColor: (theme) => theme.palette.grey[100],
       }}
       onKeyDown={(e) => {
-        if (e.key === "Delete") {
-          handleDelete();
+        if (e.ctrlKey && e.key === "n") {
+          handleNew();
+        } else if (e.ctrlKey && e.key === "s") {
+          handleSave();
         } else if (e.ctrlKey && e.key === "Enter") {
           handleSend();
         }
@@ -129,10 +132,13 @@ export default function ConversationPanel(props: ConversationPanelProps) {
           >
             <h3>🐚 Why not ask Magic Conch?</h3>
             <p>
-              <b>Ctrl+Enter</b> to send
+              <b>Ctrl+Enter</b> to send message
             </p>
             <p>
-              <b>Delete</b> to clear
+              <b>Ctrl+S</b> to save conversation
+            </p>
+            <p>
+              <b>Ctrl+N</b> to start a new conversation
             </p>
           </Typography>
         )}
@@ -170,11 +176,11 @@ export default function ConversationPanel(props: ConversationPanelProps) {
       {conversation.messages.length > 0 ? (
         <div>
           <IconButton
-            id="delete-button"
-            onClick={handleDelete}
+            id="new-button"
+            onClick={handleNew}
             sx={{ position: "fixed", top: "0.5rem", right: "0.6rem" }}
           >
-            <DeleteIcon />
+            <AutorenewIcon />
           </IconButton>
           <IconButton
             id="save-button"
