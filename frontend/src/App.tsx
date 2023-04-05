@@ -11,12 +11,13 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const [id, setId] = React.useState(0);
+  const [query, setQuery] = React.useState("");
   const [conversations, setConversations] = React.useState<Conversation[]>([]);
   const [refresh, setRefresh] = React.useState(true);
 
   useEffect(() => {
     if (refresh) {
-      List()
+      List(query)
         .then(setConversations)
         .catch(toast.error)
         .finally(() => {
@@ -32,6 +33,7 @@ export default function App() {
       <SideBar
         conversations={conversations}
         setId={setId}
+        setQuery={setQuery}
         refresh={() => {
           setRefresh(true);
         }}

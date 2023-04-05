@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqljson"
+	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	"net/http"
 	"net/url"
 	"strings"
@@ -198,6 +201,13 @@ func (a *App) Delete(id int) error {
 	return a.data.Conversation.DeleteOneID(id).Exec(a.ctx)
 }
 
-func (a *App) List() ([]*ent.Conversation, error) {
-	return a.data.Conversation.Query().Order(ent.Desc("update_time")).All(a.ctx)
+func (a *App) List(query string) ([]*ent.Conversation, error) {
+	runtime.LogDebug(a.ctx, "list query: "+query)
+	q := a.data.Conversation.Query()
+	if query != "" {
+		q = q.Where(func(s *sql.Selector) {
+			s.Where(sqljson.StringContains(conversation.FieldMessages, query))
+		})
+	}
+	return q.Order(ent.Desc(conversation.FieldUpdateTime)).All(a.ctx)
 }

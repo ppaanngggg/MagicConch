@@ -7,7 +7,7 @@ export function Delete(arg1:number):Promise<void>;
 
 export function GetSettings():Promise<any>;
 
-export function List():Promise<Array<any>>;
+export function List(arg1:string):Promise<Array<any>>;
 
 export function One(arg1:number):Promise<any>;
 

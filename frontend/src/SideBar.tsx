@@ -1,7 +1,7 @@
 import { Delete } from "../wailsjs/go/main/App";
 import { Conversation } from "./ConversationPanel";
 import SettingsDialog from "./SettingsDialog";
-import DeleteIcon from "@mui/icons-material/Delete";
+import RemoveIcon from "@mui/icons-material/Remove";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Card,
@@ -14,6 +14,7 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  TextField,
 } from "@mui/material";
 import * as React from "react";
 import { useState } from "react";
@@ -22,6 +23,7 @@ import { toast } from "react-toastify";
 type SideBarProps = {
   conversations: Conversation[];
   setId: (id: number) => void;
+  setQuery: (query: string) => void;
   refresh: () => void;
 };
 
@@ -40,30 +42,31 @@ export default function SideBar(props: SideBarProps) {
       variant="permanent"
     >
       <Stack
-        sx={{ height: "100vh" }}
+        sx={{
+          height: "100vh",
+          backgroundColor: (theme) => theme.palette.grey[200],
+        }}
         onMouseLeave={() => {
           setHoveredId(0);
         }}
       >
-        <List>
-          <ListItemButton
-            onClick={() => {
-              setShowSettings(true);
-            }}
-          >
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText sx={{ overflow: "hidden" }} primary="Setting" />
-          </ListItemButton>
-        </List>
-
+        <TextField
+          variant="outlined"
+          placeholder="Search"
+          sx={{ margin: "0.2rem", backgroundColor: "white" }}
+          inputProps={{
+            sx: { padding: "0.5rem" },
+          }}
+          onChange={(e) => {
+            props.setQuery(e.target.value);
+            props.refresh();
+          }}
+        />
         <List
           disablePadding
           sx={{
             flexGrow: 1,
             overflow: "auto",
-            backgroundColor: (theme) => theme.palette.grey[200],
           }}
         >
           {props.conversations.map((conversation) => (
@@ -80,7 +83,7 @@ export default function SideBar(props: SideBarProps) {
                           .catch(toast.error);
                       }}
                     >
-                      <DeleteIcon />
+                      <RemoveIcon />
                     </IconButton>
                   )
                 }
@@ -103,6 +106,22 @@ export default function SideBar(props: SideBarProps) {
           ))}
         </List>
         <Divider />
+        <List
+          sx={{
+            backgroundColor: "white",
+          }}
+        >
+          <ListItemButton
+            onClick={() => {
+              setShowSettings(true);
+            }}
+          >
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText sx={{ overflow: "hidden" }} primary="Setting" />
+          </ListItemButton>
+        </List>
       </Stack>
 
       {showSettings && <SettingsDialog close={() => setShowSettings(false)} />}

@@ -14,8 +14,8 @@ export function GetSettings() {
   return window['go']['main']['App']['GetSettings']();
 }
 
-export function List() {
-  return window['go']['main']['App']['List']();
+export function List(arg1) {
+  return window['go']['main']['App']['List'](arg1);
 }
 
 export function One(arg1) {
