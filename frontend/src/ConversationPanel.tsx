@@ -1,8 +1,12 @@
 import { Chat, One, Save } from "../wailsjs/go/main/App";
-import MessageBlock, { Message, roleSystem, roleUser } from "./MessageBlock";
-import SystemDialog from "./SystemDialog";
-import AutorenewIcon from "@mui/icons-material/Autorenew";
-import ModeIcon from "@mui/icons-material/Mode";
+import MessageBlock, {
+  Message,
+  roleAssistant,
+  roleSystem,
+  roleUser,
+} from "./MessageBlock";
+import AddIcon from "@mui/icons-material/Add";
+import ReplayIcon from "@mui/icons-material/Replay";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
 import {
@@ -13,7 +17,7 @@ import {
   List,
   Stack,
   TextField,
-  Typography,
+  Tooltip,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -39,7 +43,6 @@ export default function ConversationPanel(props: ConversationPanelProps) {
   });
   const [input, setInput] = useState("");
   const [chatting, setChatting] = useState(false);
-  const [showSystem, setShowSystem] = useState(false);
 
   const listRef = useRef<HTMLUListElement | null>(null);
 
@@ -62,10 +65,10 @@ export default function ConversationPanel(props: ConversationPanelProps) {
           setChatting(false);
         });
     }
-  }, [chatting]);
+  }, [conversation]);
 
   const handleSend = () => {
-    if (input.length > 0) {
+    if (input.length > 0 && !chatting) {
       setConversation({
         ...conversation,
         messages: [
@@ -78,25 +81,47 @@ export default function ConversationPanel(props: ConversationPanelProps) {
     }
   };
 
+  const handleSystem = () => {
+    if (input.length > 0 && !chatting && conversation.messages.length == 0) {
+      setConversation({
+        ...conversation,
+        messages: [{ role: roleSystem, content: input }],
+      });
+      setInput("");
+    }
+  };
+
+  const handleReplay = () => {
+    let message: Message | undefined;
+    while (conversation.messages.length > 0) {
+      message = conversation.messages.pop();
+      if (message?.role !== roleAssistant) {
+        setInput(message?.content ?? "");
+        setConversation(conversation);
+        break;
+      }
+    }
+  };
+
   const handleNew = () => {
     setConversation({ id: 0, title: "", messages: [] });
     props.resetId();
   };
 
   const handleSave = () => {
-    Save(conversation)
-      .then(setConversation)
-      .then(props.refresh)
-      .catch(toast.error);
-  };
-
-  const handleSystem = () => {
-    setShowSystem(true);
+    if (conversation?.messages?.length > 0) {
+      Save(conversation)
+        .then(setConversation)
+        .then(props.refresh)
+        .catch(toast.error);
+    }
   };
 
   useHotkeys("ctrl+n", handleNew, { enableOnFormTags: true });
   useHotkeys("ctrl+s", handleSave, { enableOnFormTags: true });
+  useHotkeys("ctrl+r", handleReplay, { enableOnFormTags: true });
   useHotkeys("ctrl+enter", handleSend, { enableOnFormTags: true });
+  useHotkeys("ctrl+shift+enter", handleSystem, { enableOnFormTags: true });
 
   return (
     <Box
@@ -108,7 +133,6 @@ export default function ConversationPanel(props: ConversationPanelProps) {
       <Stack sx={{ height: "100vh" }}>
         {conversation.messages.length > 0 ? (
           <List
-            id="conversations"
             ref={listRef}
             disablePadding
             sx={{ flexGrow: 1, overflow: "auto" }}
@@ -118,37 +142,43 @@ export default function ConversationPanel(props: ConversationPanelProps) {
             ))}
           </List>
         ) : (
-          <Typography
+          <Box
             sx={{
               flexGrow: 1,
               textAlign: "center",
-              paddingTop: "calc(50vh - 6rem)",
+              paddingTop: "calc(50vh - 12rem)",
               color: (theme) => theme.palette.grey[500],
             }}
           >
-            <h3>🐚 Why not ask Magic Conch?</h3>
+            <h2>🐚 Why not ask Magic Conch?</h2>
+            <p>
+              <b>Ctrl+N</b> to start a new conversation
+            </p>
             <p>
               <b>Ctrl+Enter</b> to send message
+            </p>
+            <p>
+              <b>Ctrl+Shift+Enter</b> to set system
             </p>
             <p>
               <b>Ctrl+S</b> to save conversation
             </p>
             <p>
-              <b>Ctrl+N</b> to start a new conversation
+              <b>Ctrl+R</b> to replay last round
             </p>
-          </Typography>
+          </Box>
         )}
 
         {chatting && <LinearProgress />}
 
         <Divider />
         <TextField
-          id="input-field"
           variant="standard"
           multiline
           value={input}
           onChange={(e) => setInput(e.target.value)}
           maxRows={12}
+          placeholder="Type your message here..."
           InputProps={{
             sx: {
               padding: "1rem",
@@ -161,56 +191,42 @@ export default function ConversationPanel(props: ConversationPanelProps) {
         />
       </Stack>
 
-      <IconButton
-        id="send-button"
-        onClick={handleSend}
-        sx={{ position: "fixed", right: "0.6rem", bottom: "0.5rem" }}
-      >
-        <SendIcon />
-      </IconButton>
+      <Tooltip title={"send"}>
+        <IconButton
+          onClick={handleSend}
+          sx={{ position: "fixed", right: "0.6rem", bottom: "0.5rem" }}
+        >
+          <SendIcon />
+        </IconButton>
+      </Tooltip>
 
-      {conversation.messages.length > 0 ? (
+      {conversation.messages.length > 0 && (
         <div>
-          <IconButton
-            id="new-button"
-            onClick={handleNew}
-            sx={{ position: "fixed", top: "0.5rem", right: "0.6rem" }}
-          >
-            <AutorenewIcon />
-          </IconButton>
-          <IconButton
-            id="save-button"
-            onClick={handleSave}
-            sx={{ position: "fixed", top: "3rem", right: "0.6rem" }}
-          >
-            <SaveIcon />
-          </IconButton>
+          <Tooltip title={"new"}>
+            <IconButton
+              onClick={handleNew}
+              sx={{ position: "fixed", top: "0.5rem", right: "0.6rem" }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={"save"}>
+            <IconButton
+              onClick={handleSave}
+              sx={{ position: "fixed", top: "3rem", right: "0.6rem" }}
+            >
+              <SaveIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={"replay"}>
+            <IconButton
+              onClick={handleReplay}
+              sx={{ position: "fixed", top: "5.5rem", right: "0.6rem" }}
+            >
+              <ReplayIcon />
+            </IconButton>
+          </Tooltip>
         </div>
-      ) : (
-        <div>
-          <IconButton
-            id="system-button"
-            onClick={handleSystem}
-            sx={{ position: "fixed", top: "0.5rem", right: "0.6rem" }}
-          >
-            <ModeIcon />
-          </IconButton>
-        </div>
-      )}
-
-      {showSystem && (
-        <SystemDialog
-          close={() => {
-            setShowSystem(false);
-          }}
-          updateSystem={(system) => {
-            setConversation({
-              id: 0,
-              title: "",
-              messages: [{ role: roleSystem, content: system }],
-            });
-          }}
-        />
       )}
     </Box>
   );

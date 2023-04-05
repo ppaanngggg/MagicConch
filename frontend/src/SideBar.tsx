@@ -15,6 +15,7 @@ import {
   ListItemText,
   Stack,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import * as React from "react";
 import { useState } from "react";
@@ -22,6 +23,7 @@ import { toast } from "react-toastify";
 
 type SideBarProps = {
   conversations: Conversation[];
+  id: number;
   setId: (id: number) => void;
   setQuery: (query: string) => void;
   refresh: () => void;
@@ -70,21 +72,30 @@ export default function SideBar(props: SideBarProps) {
           }}
         >
           {props.conversations.map((conversation) => (
-            <Card variant={"outlined"} sx={{ margin: "0.2rem" }}>
+            <Card
+              key={conversation.id}
+              variant={"outlined"}
+              sx={{ margin: "0.2rem" }}
+            >
               <ListItem
                 disablePadding
                 secondaryAction={
                   conversation.id === hoveredId && (
-                    <IconButton
-                      edge="end"
-                      onClick={() => {
-                        Delete(conversation.id)
-                          .then(props.refresh)
-                          .catch(toast.error);
-                      }}
-                    >
-                      <RemoveIcon />
-                    </IconButton>
+                    <Tooltip title={"remove"}>
+                      <IconButton
+                        edge="end"
+                        onClick={() => {
+                          Delete(conversation.id)
+                            .then(props.refresh)
+                            .then(() => {
+                              if (conversation.id === props.id) props.setId(0);
+                            })
+                            .catch(toast.error);
+                        }}
+                      >
+                        <RemoveIcon />
+                      </IconButton>
+                    </Tooltip>
                   )
                 }
               >

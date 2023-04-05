@@ -32,6 +32,7 @@ export default function App() {
       <ToastContainer />
       <SideBar
         conversations={conversations}
+        id={id}
         setId={setId}
         setQuery={setQuery}
         refresh={() => {
