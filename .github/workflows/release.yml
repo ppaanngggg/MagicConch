@@ -21,6 +21,9 @@ jobs:
           node-version: 18
       - name: Get Wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - name: Check Wails deps
+        run: |
+          wails doctor
       - name: Build Wails app
         run: |
           wails build
