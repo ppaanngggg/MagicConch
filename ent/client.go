@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	"github.com/ppaanngggg/MagicConch/ent/settings"
+	"github.com/ppaanngggg/MagicConch/ent/system"
 )
 
 // Client is the client that holds all ent builders.
@@ -26,6 +27,8 @@ type Client struct {
 	Conversation *ConversationClient
 	// Settings is the client for interacting with the Settings builders.
 	Settings *SettingsClient
+	// System is the client for interacting with the System builders.
+	System *SystemClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -41,6 +44,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Conversation = NewConversationClient(c.config)
 	c.Settings = NewSettingsClient(c.config)
+	c.System = NewSystemClient(c.config)
 }
 
 type (
@@ -125,6 +129,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:       cfg,
 		Conversation: NewConversationClient(cfg),
 		Settings:     NewSettingsClient(cfg),
+		System:       NewSystemClient(cfg),
 	}, nil
 }
 
@@ -146,6 +151,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:       cfg,
 		Conversation: NewConversationClient(cfg),
 		Settings:     NewSettingsClient(cfg),
+		System:       NewSystemClient(cfg),
 	}, nil
 }
 
@@ -176,6 +182,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Conversation.Use(hooks...)
 	c.Settings.Use(hooks...)
+	c.System.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
@@ -183,6 +190,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Conversation.Intercept(interceptors...)
 	c.Settings.Intercept(interceptors...)
+	c.System.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -192,6 +200,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Conversation.mutate(ctx, m)
 	case *SettingsMutation:
 		return c.Settings.mutate(ctx, m)
+	case *SystemMutation:
+		return c.System.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -433,12 +443,130 @@ func (c *SettingsClient) mutate(ctx context.Context, m *SettingsMutation) (Value
 	}
 }
 
+// SystemClient is a client for the System schema.
+type SystemClient struct {
+	config
+}
+
+// NewSystemClient returns a client for the System from the given config.
+func NewSystemClient(c config) *SystemClient {
+	return &SystemClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `system.Hooks(f(g(h())))`.
+func (c *SystemClient) Use(hooks ...Hook) {
+	c.hooks.System = append(c.hooks.System, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `system.Intercept(f(g(h())))`.
+func (c *SystemClient) Intercept(interceptors ...Interceptor) {
+	c.inters.System = append(c.inters.System, interceptors...)
+}
+
+// Create returns a builder for creating a System entity.
+func (c *SystemClient) Create() *SystemCreate {
+	mutation := newSystemMutation(c.config, OpCreate)
+	return &SystemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of System entities.
+func (c *SystemClient) CreateBulk(builders ...*SystemCreate) *SystemCreateBulk {
+	return &SystemCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for System.
+func (c *SystemClient) Update() *SystemUpdate {
+	mutation := newSystemMutation(c.config, OpUpdate)
+	return &SystemUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SystemClient) UpdateOne(s *System) *SystemUpdateOne {
+	mutation := newSystemMutation(c.config, OpUpdateOne, withSystem(s))
+	return &SystemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SystemClient) UpdateOneID(id int) *SystemUpdateOne {
+	mutation := newSystemMutation(c.config, OpUpdateOne, withSystemID(id))
+	return &SystemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for System.
+func (c *SystemClient) Delete() *SystemDelete {
+	mutation := newSystemMutation(c.config, OpDelete)
+	return &SystemDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SystemClient) DeleteOne(s *System) *SystemDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SystemClient) DeleteOneID(id int) *SystemDeleteOne {
+	builder := c.Delete().Where(system.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SystemDeleteOne{builder}
+}
+
+// Query returns a query builder for System.
+func (c *SystemClient) Query() *SystemQuery {
+	return &SystemQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSystem},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a System entity by its id.
+func (c *SystemClient) Get(ctx context.Context, id int) (*System, error) {
+	return c.Query().Where(system.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SystemClient) GetX(ctx context.Context, id int) *System {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SystemClient) Hooks() []Hook {
+	return c.hooks.System
+}
+
+// Interceptors returns the client interceptors.
+func (c *SystemClient) Interceptors() []Interceptor {
+	return c.inters.System
+}
+
+func (c *SystemClient) mutate(ctx context.Context, m *SystemMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SystemCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SystemUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SystemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SystemDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown System mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Conversation, Settings []ent.Hook
+		Conversation, Settings, System []ent.Hook
 	}
 	inters struct {
-		Conversation, Settings []ent.Interceptor
+		Conversation, Settings, System []ent.Interceptor
 	}
 )

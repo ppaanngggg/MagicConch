@@ -34,10 +34,25 @@ var (
 		Columns:    SettingsColumns,
 		PrimaryKey: []*schema.Column{SettingsColumns[0]},
 	}
+	// SystemsColumns holds the columns for the "systems" table.
+	SystemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "system", Type: field.TypeString, Unique: true},
+		{Name: "click_time", Type: field.TypeTime},
+	}
+	// SystemsTable holds the schema information for the "systems" table.
+	SystemsTable = &schema.Table{
+		Name:       "systems",
+		Columns:    SystemsColumns,
+		PrimaryKey: []*schema.Column{SystemsColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ConversationsTable,
 		SettingsTable,
+		SystemsTable,
 	}
 )
 

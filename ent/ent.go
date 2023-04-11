@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	"github.com/ppaanngggg/MagicConch/ent/settings"
+	"github.com/ppaanngggg/MagicConch/ent/system"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -68,6 +69,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		conversation.Table: conversation.ValidColumn,
 		settings.Table:     settings.ValidColumn,
+		system.Table:       system.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

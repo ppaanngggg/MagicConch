@@ -7,6 +7,7 @@ import (
 
 	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	"github.com/ppaanngggg/MagicConch/ent/schema"
+	"github.com/ppaanngggg/MagicConch/ent/system"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -28,4 +29,23 @@ func init() {
 	conversation.DefaultUpdateTime = conversationDescUpdateTime.Default.(func() time.Time)
 	// conversation.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	conversation.UpdateDefaultUpdateTime = conversationDescUpdateTime.UpdateDefault.(func() time.Time)
+	systemMixin := schema.System{}.Mixin()
+	systemMixinFields0 := systemMixin[0].Fields()
+	_ = systemMixinFields0
+	systemFields := schema.System{}.Fields()
+	_ = systemFields
+	// systemDescCreateTime is the schema descriptor for create_time field.
+	systemDescCreateTime := systemMixinFields0[0].Descriptor()
+	// system.DefaultCreateTime holds the default value on creation for the create_time field.
+	system.DefaultCreateTime = systemDescCreateTime.Default.(func() time.Time)
+	// systemDescUpdateTime is the schema descriptor for update_time field.
+	systemDescUpdateTime := systemMixinFields0[1].Descriptor()
+	// system.DefaultUpdateTime holds the default value on creation for the update_time field.
+	system.DefaultUpdateTime = systemDescUpdateTime.Default.(func() time.Time)
+	// system.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	system.UpdateDefaultUpdateTime = systemDescUpdateTime.UpdateDefault.(func() time.Time)
+	// systemDescClickTime is the schema descriptor for click_time field.
+	systemDescClickTime := systemFields[1].Descriptor()
+	// system.DefaultClickTime holds the default value on creation for the click_time field.
+	system.DefaultClickTime = systemDescClickTime.Default.(func() time.Time)
 }

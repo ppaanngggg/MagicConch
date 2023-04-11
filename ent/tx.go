@@ -16,6 +16,8 @@ type Tx struct {
 	Conversation *ConversationClient
 	// Settings is the client for interacting with the Settings builders.
 	Settings *SettingsClient
+	// System is the client for interacting with the System builders.
+	System *SystemClient
 
 	// lazily loaded.
 	client     *Client
@@ -149,6 +151,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Conversation = NewConversationClient(tx.config)
 	tx.Settings = NewSettingsClient(tx.config)
+	tx.System = NewSystemClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

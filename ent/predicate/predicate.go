@@ -11,3 +11,6 @@ type Conversation func(*sql.Selector)
 
 // Settings is the predicate function for settings builders.
 type Settings func(*sql.Selector)
+
+// System is the predicate function for system builders.
+type System func(*sql.Selector)

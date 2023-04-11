@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	dbsql "database/sql"
 	"encoding/json"
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqljson"
 	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	"net/http"
 	"net/url"
@@ -16,7 +16,7 @@ import (
 
 	"github.com/kirsle/configdir"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 type App struct {
@@ -31,13 +31,11 @@ func NewApp() *App {
 		panic(err)
 	}
 
-	client, err := ent.Open(
-		"sqlite3",
-		"file:"+userConfigDir+"/db?mode=rwc&cache=shared&_fk=1",
-	)
+	db, err := dbsql.Open("sqlite", userConfigDir+"/db?_pragma=foreign_keys(1)")
 	if err != nil {
 		panic(err)
 	}
+	client := ent.NewClient(ent.Driver(sql.NewDriver("sqlite3", sql.Conn{ExecQuerier: db})))
 	if err = client.Schema.Create(context.Background()); err != nil {
 		panic(err)
 	}
@@ -205,9 +203,11 @@ func (a *App) List(query string) ([]*ent.Conversation, error) {
 	runtime.LogDebug(a.ctx, "list query: "+query)
 	q := a.data.Conversation.Query()
 	if query != "" {
-		q = q.Where(func(s *sql.Selector) {
-			s.Where(sqljson.StringContains(conversation.FieldMessages, query))
-		})
+		q = q.Where(
+			func(s *sql.Selector) {
+				s.Where(sql.Like(conversation.FieldTitle, "%"+query+"%"))
+			},
+		)
 	}
 	return q.Order(ent.Desc(conversation.FieldUpdateTime)).All(a.ctx)
 }
