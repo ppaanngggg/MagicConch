@@ -48,6 +48,7 @@ export namespace main {
 	export class Settings {
 	    apiKey: string;
 	    proxy: string;
+	    temperature: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -57,6 +58,7 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.apiKey = source["apiKey"];
 	        this.proxy = source["proxy"];
+	        this.temperature = source["temperature"];
 	    }
 	}
 

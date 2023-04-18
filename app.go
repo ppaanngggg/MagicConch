@@ -8,6 +8,7 @@ import (
 	"github.com/ppaanngggg/MagicConch/ent/conversation"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/ppaanngggg/MagicConch/ent"
@@ -23,6 +24,8 @@ type App struct {
 	ctx  context.Context
 	data *ent.Client
 	ai   *openai.Client
+
+	temperature float32
 }
 
 func NewApp() *App {
@@ -47,7 +50,7 @@ func NewApp() *App {
 	if err != nil {
 		panic(err)
 	}
-	app.setAI(settings)
+	app.setting(settings)
 
 	return app
 }
@@ -68,16 +71,18 @@ Settings
 */
 
 const (
-	SettingsApiKey = "api_key"
-	SettingsProxy  = "proxy"
+	SettingsApiKey     = "api_key"
+	SettingsProxy      = "proxy"
+	SettingTemperature = "temperature"
 )
 
 type Settings struct {
-	ApiKey string `json:"apiKey"`
-	Proxy  string `json:"proxy"`
+	ApiKey      string  `json:"apiKey"`
+	Proxy       string  `json:"proxy"`
+	Temperature float32 `json:"temperature"`
 }
 
-func (a *App) setAI(settings *Settings) {
+func (a *App) setting(settings *Settings) {
 	config := openai.DefaultConfig(settings.ApiKey)
 	// transport
 	clone := http.DefaultTransport.(*http.Transport).Clone()
@@ -92,6 +97,7 @@ func (a *App) setAI(settings *Settings) {
 	config.HTTPClient.Transport = clone
 
 	a.ai = openai.NewClientWithConfig(config)
+	a.temperature = settings.Temperature
 }
 
 func (a *App) GetSettings() (*Settings, error) {
@@ -99,13 +105,21 @@ func (a *App) GetSettings() (*Settings, error) {
 	if err != nil {
 		return nil, err
 	}
-	settings := &Settings{}
+	settings := &Settings{Temperature: 1.0}
 	for _, r := range records {
 		if r.Key == SettingsApiKey && len(r.Values) > 0 {
 			settings.ApiKey = r.Values[0]
 		}
 		if r.Key == SettingsProxy && len(r.Values) > 0 {
 			settings.Proxy = r.Values[0]
+		}
+		if r.Key == SettingTemperature && len(r.Values) > 0 {
+			t, err := strconv.ParseFloat(r.Values[0], 64)
+			if err != nil {
+				runtime.LogWarningf(a.ctx, "temperature parse err: %v+", err)
+			} else {
+				settings.Temperature = float32(t)
+			}
 		}
 	}
 	return settings, nil
@@ -116,6 +130,9 @@ func (a *App) SaveSettings(settings *Settings) error {
 		CreateBulk(
 			a.data.Settings.Create().SetKey(SettingsApiKey).SetValues([]string{settings.ApiKey}),
 			a.data.Settings.Create().SetKey(SettingsProxy).SetValues([]string{settings.Proxy}),
+			a.data.Settings.Create().SetKey(SettingTemperature).SetValues([]string{
+				strconv.FormatFloat(float64(settings.Temperature), 'f', 6, 32),
+			}),
 		).
 		OnConflict().
 		UpdateNewValues().
@@ -123,7 +140,7 @@ func (a *App) SaveSettings(settings *Settings) error {
 		return err
 	}
 
-	a.setAI(settings)
+	a.setting(settings)
 	return nil
 }
 
@@ -132,20 +149,19 @@ Conversation
 */
 
 func (a *App) Chat(conversation *ent.Conversation) (*ent.Conversation, error) {
+	req := openai.ChatCompletionRequest{
+		Model:       openai.GPT3Dot5Turbo,
+		Messages:    conversation.Messages,
+		Temperature: a.temperature,
+	}
 	{
-		tmp, err := json.MarshalIndent(conversation.Messages, "", "  ")
+		tmp, err := json.MarshalIndent(req, "", "  ")
 		if err != nil {
 			runtime.LogWarningf(a.ctx, "chat req marshal err: %v+", err)
 		}
 		runtime.LogDebug(a.ctx, "chat req:\n"+string(tmp))
 	}
-	resp, err := a.ai.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model:    openai.GPT3Dot5Turbo,
-			Messages: conversation.Messages,
-		},
-	)
+	resp, err := a.ai.CreateChatCompletion(context.Background(), req)
 	if err != nil {
 		runtime.LogWarningf(a.ctx, "chat request err: %v+", err)
 		return nil, err

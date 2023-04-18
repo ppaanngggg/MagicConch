@@ -5,7 +5,7 @@ go 1.18
 require (
 	entgo.io/ent v0.11.9
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
-	github.com/sashabaranov/go-openai v1.5.0
+	github.com/sashabaranov/go-openai v1.8.0
 	github.com/wailsapp/wails/v2 v2.4.1
 	modernc.org/sqlite v1.21.1
 )
