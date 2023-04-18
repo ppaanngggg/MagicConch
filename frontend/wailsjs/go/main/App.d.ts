@@ -3,14 +3,14 @@
 
 export function Chat(arg1:any):Promise<any>;
 
-export function Delete(arg1:number):Promise<void>;
+export function DeleteConversation(arg1:number):Promise<void>;
+
+export function GetConversation(arg1:number):Promise<any>;
 
 export function GetSettings():Promise<any>;
 
-export function List(arg1:string):Promise<Array<any>>;
+export function ListConversations(arg1:string):Promise<Array<any>>;
 
-export function One(arg1:number):Promise<any>;
-
-export function Save(arg1:any):Promise<any>;
+export function SaveConversation(arg1:any):Promise<any>;
 
 export function SaveSettings(arg1:any):Promise<void>;

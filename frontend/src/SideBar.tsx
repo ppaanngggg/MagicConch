@@ -1,4 +1,4 @@
-import { Delete } from "../wailsjs/go/main/App";
+import { DeleteConversation, ListConversations } from "../wailsjs/go/main/App";
 import { Conversation } from "./ConversationPanel";
 import SettingsDialog from "./SettingsDialog";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -18,20 +18,25 @@ import {
   Tooltip,
 } from "@mui/material";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 type SideBarProps = {
-  conversations: Conversation[];
-  id: number;
-  setId: (id: number) => void;
-  setQuery: (query: string) => void;
+  conversation: Conversation;
+  setConversation: (conversation: Conversation) => void;
+  refreshListCount: number;
   refresh: () => void;
 };
 
 export default function SideBar(props: SideBarProps) {
+  const [query, setQuery] = React.useState("");
+  const [conversations, setConversations] = React.useState<Conversation[]>([]);
   const [hoveredId, setHoveredId] = useState<number>(0);
   const [showSettings, setShowSettings] = useState(false);
+
+  useEffect(() => {
+    ListConversations(query).then(setConversations).catch(toast.error);
+  }, [props.refreshListCount]);
 
   return (
     <Drawer
@@ -60,7 +65,7 @@ export default function SideBar(props: SideBarProps) {
             sx: { padding: "0.5rem" },
           }}
           onChange={(e) => {
-            props.setQuery(e.target.value);
+            setQuery(e.target.value);
             props.refresh();
           }}
         />
@@ -71,7 +76,7 @@ export default function SideBar(props: SideBarProps) {
             overflow: "auto",
           }}
         >
-          {props.conversations.map((conversation) => (
+          {conversations.map((conversation) => (
             <Card
               key={conversation.id}
               variant={"outlined"}
@@ -85,10 +90,15 @@ export default function SideBar(props: SideBarProps) {
                       <IconButton
                         edge="end"
                         onClick={() => {
-                          Delete(conversation.id)
+                          DeleteConversation(conversation.id)
                             .then(props.refresh)
                             .then(() => {
-                              if (conversation.id === props.id) props.setId(0);
+                              if (conversation.id === props.conversation.id)
+                                props.setConversation({
+                                  id: 0,
+                                  title: "",
+                                  messages: [],
+                                });
                             })
                             .catch(toast.error);
                         }}
@@ -101,7 +111,7 @@ export default function SideBar(props: SideBarProps) {
               >
                 <ListItemButton
                   onClick={() => {
-                    props.setId(conversation.id);
+                    props.setConversation(conversation);
                   }}
                   onMouseOver={() => {
                     setHoveredId(conversation.id);

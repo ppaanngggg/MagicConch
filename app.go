@@ -164,7 +164,7 @@ func (a *App) Chat(conversation *ent.Conversation) (*ent.Conversation, error) {
 	return conversation, nil
 }
 
-func (a *App) Save(conversation *ent.Conversation) (*ent.Conversation, error) {
+func (a *App) SaveConversation(conversation *ent.Conversation) (*ent.Conversation, error) {
 	{
 		tmp, err := json.MarshalIndent(conversation.Messages, "", "  ")
 		if err != nil {
@@ -191,15 +191,15 @@ func (a *App) Save(conversation *ent.Conversation) (*ent.Conversation, error) {
 	}
 }
 
-func (a *App) One(id int) (*ent.Conversation, error) {
+func (a *App) GetConversation(id int) (*ent.Conversation, error) {
 	return a.data.Conversation.Get(a.ctx, id)
 }
 
-func (a *App) Delete(id int) error {
+func (a *App) DeleteConversation(id int) error {
 	return a.data.Conversation.DeleteOneID(id).Exec(a.ctx)
 }
 
-func (a *App) List(query string) ([]*ent.Conversation, error) {
+func (a *App) ListConversations(query string) ([]*ent.Conversation, error) {
 	runtime.LogDebug(a.ctx, "list query: "+query)
 	q := a.data.Conversation.Query()
 	if query != "" {

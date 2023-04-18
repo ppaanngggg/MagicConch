@@ -1,4 +1,4 @@
-import { Chat, One, Save } from "../wailsjs/go/main/App";
+import { Chat, SaveConversation } from "../wailsjs/go/main/App";
 import MessageBlock, {
   Message,
   roleAssistant,
@@ -30,49 +30,36 @@ export interface Conversation {
 }
 
 interface ConversationPanelProps {
-  id: number;
-  resetId: () => void;
+  conversation: Conversation;
+  setConversation: (conversation: Conversation) => void;
   refresh: () => void;
 }
 
 export default function ConversationPanel(props: ConversationPanelProps) {
-  const [conversation, setConversation] = useState<Conversation>({
-    id: 0,
-    title: "",
-    messages: [],
-  });
   const [input, setInput] = useState("");
   const [chatting, setChatting] = useState(false);
 
   const listRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
-    if (props.id > 0) {
-      One(props.id).then(setConversation).catch(toast.error);
-    } else {
-      setConversation({ id: 0, title: "", messages: [] });
-    }
-  }, [props.id]);
-
-  useEffect(() => {
     listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 
-    if (chatting && conversation.messages.length > 0) {
-      Chat(conversation)
-        .then(setConversation)
+    if (chatting && props.conversation.messages.length > 0) {
+      Chat(props.conversation)
+        .then(props.setConversation)
         .catch(toast.error)
         .finally(() => {
           setChatting(false);
         });
     }
-  }, [conversation]);
+  }, [props.conversation]);
 
   const handleSend = () => {
     if (input.length > 0 && !chatting) {
-      setConversation({
-        ...conversation,
+      props.setConversation({
+        ...props.conversation,
         messages: [
-          ...conversation.messages,
+          ...props.conversation.messages,
           { role: roleUser, content: input },
         ],
       });
@@ -82,9 +69,13 @@ export default function ConversationPanel(props: ConversationPanelProps) {
   };
 
   const handleSystem = () => {
-    if (input.length > 0 && !chatting && conversation.messages.length == 0) {
-      setConversation({
-        ...conversation,
+    if (
+      input.length > 0 &&
+      !chatting &&
+      props.conversation.messages.length == 0
+    ) {
+      props.setConversation({
+        ...props.conversation,
         messages: [{ role: roleSystem, content: input }],
       });
       setInput("");
@@ -93,25 +84,24 @@ export default function ConversationPanel(props: ConversationPanelProps) {
 
   const handleReplay = () => {
     let message: Message | undefined;
-    while (conversation.messages.length > 0) {
-      message = conversation.messages.pop();
+    while (props.conversation.messages.length > 0) {
+      message = props.conversation.messages.pop();
       if (message?.role !== roleAssistant) {
         setInput(message?.content ?? "");
-        setConversation(conversation);
+        props.setConversation(props.conversation);
         break;
       }
     }
   };
 
   const handleNew = () => {
-    setConversation({ id: 0, title: "", messages: [] });
-    props.resetId();
+    props.setConversation({ id: 0, title: "", messages: [] });
   };
 
   const handleSave = () => {
-    if (conversation?.messages?.length > 0) {
-      Save(conversation)
-        .then(setConversation)
+    if (props.conversation?.messages?.length > 0) {
+      SaveConversation(props.conversation)
+        .then(props.setConversation)
         .then(props.refresh)
         .catch(toast.error);
     }
@@ -131,13 +121,13 @@ export default function ConversationPanel(props: ConversationPanelProps) {
       }}
     >
       <Stack sx={{ height: "100vh" }}>
-        {conversation.messages.length > 0 ? (
+        {props.conversation.messages.length > 0 ? (
           <List
             ref={listRef}
             disablePadding
             sx={{ flexGrow: 1, overflow: "auto" }}
           >
-            {conversation.messages.map((m) => (
+            {props.conversation.messages.map((m) => (
               <MessageBlock message={m} />
             ))}
           </List>
@@ -200,7 +190,7 @@ export default function ConversationPanel(props: ConversationPanelProps) {
         </IconButton>
       </Tooltip>
 
-      {conversation.messages.length > 0 && (
+      {props.conversation.messages.length > 0 && (
         <div>
           <Tooltip title={"new"}>
             <IconButton

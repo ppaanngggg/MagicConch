@@ -6,24 +6,24 @@ export function Chat(arg1) {
   return window['go']['main']['App']['Chat'](arg1);
 }
 
-export function Delete(arg1) {
-  return window['go']['main']['App']['Delete'](arg1);
+export function DeleteConversation(arg1) {
+  return window['go']['main']['App']['DeleteConversation'](arg1);
+}
+
+export function GetConversation(arg1) {
+  return window['go']['main']['App']['GetConversation'](arg1);
 }
 
 export function GetSettings() {
   return window['go']['main']['App']['GetSettings']();
 }
 
-export function List(arg1) {
-  return window['go']['main']['App']['List'](arg1);
+export function ListConversations(arg1) {
+  return window['go']['main']['App']['ListConversations'](arg1);
 }
 
-export function One(arg1) {
-  return window['go']['main']['App']['One'](arg1);
-}
-
-export function Save(arg1) {
-  return window['go']['main']['App']['Save'](arg1);
+export function SaveConversation(arg1) {
+  return window['go']['main']['App']['SaveConversation'](arg1);
 }
 
 export function SaveSettings(arg1) {
