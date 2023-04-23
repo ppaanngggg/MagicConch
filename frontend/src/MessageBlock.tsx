@@ -48,11 +48,7 @@ export default function MessageBlock(props: MessageProps) {
             rehypePlugins={[rehypeRaw, rehypeHighlight]}
           />
         ) : (
-          <div>
-            {props.message.content.split("\n").map((i) => {
-              return <p>{i}</p>;
-            })}
-          </div>
+          <pre style={{ whiteSpace: "pre-wrap" }}>{props.message.content}</pre>
         )}
         {props.message.role == roleSystem && <Divider />}
       </Typography>
