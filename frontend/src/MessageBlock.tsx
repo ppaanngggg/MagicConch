@@ -22,8 +22,11 @@ type MessageProps = {
 export default function MessageBlock(props: MessageProps) {
   return (
     <ListItem
-      disablePadding
       sx={{
+        width: "100%",
+        maxWidth: "100%",
+        paddingX: "12%",
+        paddingY: "1.5rem",
         backgroundColor: (theme) => {
           if (props.message.role == roleAssistant)
             return theme.palette.grey[300];
@@ -32,26 +35,20 @@ export default function MessageBlock(props: MessageProps) {
         },
       }}
     >
-      <Typography
-        sx={{
-          width: "100%",
-          maxWidth: "100%",
-          paddingX: "12%",
-          paddingY: "1.5rem",
-        }}
-      >
-        {props.message.role == roleAssistant ? (
-          <ReactMarkdown
-            className={"markdown-body"}
-            children={props.message.content}
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeHighlight]}
-          />
-        ) : (
-          <pre style={{ whiteSpace: "pre-wrap" }}>{props.message.content}</pre>
-        )}
-        {props.message.role == roleSystem && <Divider />}
-      </Typography>
+      {props.message.role == roleAssistant ? (
+        <ReactMarkdown
+          className={"markdown-body"}
+          children={props.message.content}
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw, rehypeHighlight]}
+        />
+      ) : (
+        <Typography component={"pre"} sx={{ whiteSpace: "pre-wrap" }}>
+          <p>{props.message.content}</p>
+        </Typography>
+      )}
+
+      {props.message.role == roleSystem && <Divider />}
     </ListItem>
   );
 }
