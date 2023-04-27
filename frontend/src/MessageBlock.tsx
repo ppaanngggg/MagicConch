@@ -1,10 +1,13 @@
 import "./styles/markdown.css";
 import { Divider, ListItem, Typography } from "@mui/material";
 import "highlight.js/styles/github.css";
+import "katex/dist/katex.min.css";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 export const roleSystem = "system";
 export const roleUser = "user";
@@ -39,8 +42,8 @@ export default function MessageBlock(props: MessageProps) {
         <ReactMarkdown
           className={"markdown-body"}
           children={props.message.content}
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw, rehypeHighlight]}
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[rehypeRaw, rehypeHighlight, rehypeKatex]}
         />
       ) : (
         <Typography component={"pre"} sx={{ whiteSpace: "pre-wrap" }}>
